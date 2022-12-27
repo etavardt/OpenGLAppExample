@@ -117,10 +117,14 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    float triVertexBuf[6] = {
+    float triVertexBuf[] = {
         -0.5f, -0.5f,
-         0.0f,  0.5f,
-         0.5f, -0.5f
+         0.5f, -0.5f,
+         0.5f,  0.5f,
+
+         0.5f,  0.5f,
+        -0.5f,  0.5f,
+        -0.5f, -0.5f
     };
     glGenBuffers(bufNamesSize, bufNames);
     glBindBuffer(GL_ARRAY_BUFFER, *bufNames);
@@ -162,7 +166,7 @@ void OpenGLWindow::pullEvents() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         //glDrawArrays(GL_TRIANGLES, bufNames[0], 3);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
