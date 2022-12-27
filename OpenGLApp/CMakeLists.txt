@@ -5,7 +5,6 @@
 include_directories(
     src/
     ../3rdParty/include/
-    ../3rdParty/easyloggingpp/src
 )
 
 #link_directories([AFTER|BEFORE] directory1 [directory2 ...])
@@ -15,7 +14,6 @@ link_directories(
 
 # Add source to this project's executable.
 file(GLOB SOURCE_FILES LIST_DIRECTORIES false
-    ../3rdParty/easyloggingpp/src/*.cc
     src/*.cpp
     src/*.h
     src/*.hpp
@@ -23,7 +21,8 @@ file(GLOB SOURCE_FILES LIST_DIRECTORIES false
 
 # Add source to this project's executable.
 add_executable (OpenGLApp ${SOURCE_FILES})
-target_link_libraries(OpenGLApp KewlF glfw3 glew32s)
+target_link_libraries(OpenGLApp KewlF glfw3 glew32s ${OPENGL_LIBRARY})
+target_compile_definitions(OpenGLApp PUBLIC GLEW_STATIC)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET OpenGLApp PROPERTY CXX_STANDARD 20)

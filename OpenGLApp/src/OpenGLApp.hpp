@@ -3,18 +3,19 @@
 
 #pragma once
 
-#include <iostream>
 #include "KewlF/App.hpp"
+#include "OpenGLWindow.hpp"
 
 // TODO: Reference additional headers your program requires here.
 class OpenGLApp : public App { 
 private:
     static OpenGLApp &openGLApp;
+    OpenGLWindow window;
 
     OpenGLApp();
     ~OpenGLApp();
 
-    void processEventLoop() override {};
+    void processEventLoop() override;
 
 protected:
     //void init() override {};
