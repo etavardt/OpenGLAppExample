@@ -34,9 +34,7 @@ static ShaderProgramSource ParseShader(const std::string& filepath) {
             ss[(int)type] << line << "\n";
         }
     }
-    //ShaderProgramSource sps;
-    //sps.vertexSource = ss[0].str();
-    //sps.fragmentSource = ss[1].str();
+
     return { ss[0].str(), ss[1].str() };
 }
 
@@ -47,7 +45,7 @@ static int CompileShader(GLuint type, const std::string& source) {
     glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
  
-    //TODO: Syntax checking and Error handling
+    //Syntax checking and Error handling
     GLint result;
     glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 
@@ -117,31 +115,31 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    float triVertexBuf[] = {
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
-
-         0.5f,  0.5f,
-        -0.5f,  0.5f,
-        -0.5f, -0.5f
+    //Vertex Buffer
+    float vertexBuf[] = {
+        -0.5f, -0.5f, //0
+         0.5f, -0.5f, //1
+         0.5f,  0.5f, //2
+        -0.5f,  0.5f  //3
     };
+
+    //Indices buffer
+    unsigned int indices[] = {
+        0,1,2,
+        2,3,0
+    };
+
     glGenBuffers(bufNamesSize, bufNames);
     glBindBuffer(GL_ARRAY_BUFFER, *bufNames);
-    //glGenBuffers(bufNamesSize, &bufNames);
-    //glBindBuffer(GL_ARRAY_BUFFER, bufNames);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triVertexBuf), triVertexBuf ,GL_STATIC_DRAW);
-    //glBufferData(GL_ARRAY_BUFFER, 6*sizeof(float), triVertexBuf, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuf), vertexBuf,GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    // glVertexAttribPointer(GLuint index,
-    //    GLint size,
-    //    GLenum type,
-    //    GLboolean normalized,
-    //    GLsizei stride,
-    //    const GLvoid * pointer);
-    //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(triVertexBuf)/3, 0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2 , 0);
+
+    unsigned int ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     //ShaderProgramSource source = ParseShader("res/shaders/basicRedTri.shader");
     ShaderProgramSource source = ParseShader("res/shaders/basicBlueTri.shader");
@@ -151,7 +149,6 @@ void OpenGLWindow::init() {
     std::cout << "FRAGMENT SHADER" << std::endl;
     std::cout << source.fragmentSource << std::endl;
 
-    //GLuint shader = CreateShader(vertexShader, fragmentShader);
     shader = CreateShader(source.vertexSource, source.fragmentSource);
     glUseProgram(shader);
 
@@ -166,7 +163,8 @@ void OpenGLWindow::pullEvents() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         //glDrawArrays(GL_TRIANGLES, bufNames[0], 3);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
