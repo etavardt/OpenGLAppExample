@@ -1,7 +1,9 @@
 ﻿// OpenGLApp.cpp : Defines the entry point for the application.
 //
 
+#include <iostream>
 #include "OpenGLApp.hpp"
+#include "OpenGLWindow.hpp"
 
 OpenGLApp& OpenGLApp::openGLApp = OpenGLApp::getInstance();
 
@@ -19,6 +21,13 @@ OpenGLApp& OpenGLApp::getInstance() {
 }
 
 int OpenGLApp::runApp() {
-	std::cout << "Hello CMake." << std::endl;
-	return 0;
+
+	window.init();
+	//window.show();
+
+	return App::runApp();
+}
+
+void OpenGLApp::processEventLoop() {
+	window.pullEvents();
 }
