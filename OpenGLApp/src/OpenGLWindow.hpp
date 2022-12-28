@@ -10,6 +10,7 @@ private:
 	GLsizei bufNamesSize = 1;
 	GLuint* bufNames = (GLuint*)alloca(bufNamesSize*sizeof(GLuint)); // bufNames[];
 	GLuint shader;
+	GLint cLoc;
 
 public:
 	OpenGLWindow();
