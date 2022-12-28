@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <assert.h>
 #include "OpenGLWindow.hpp"
 #include "OpenGLDebug.hpp"
 
@@ -100,6 +101,8 @@ OpenGLWindow::OpenGLWindow() {
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
+    glfwSwapInterval(1);
+
     if (glewInit() != GLEW_OK) {
         std::cerr << "glewInit Failed" << std::endl;
     }
@@ -145,7 +148,7 @@ void OpenGLWindow::init() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     //ShaderProgramSource source = ParseShader("res/shaders/basicRedTri.shader");
-    ShaderProgramSource source = ParseShader("res/shaders/basicBlueTri.shader");
+    ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
 
     std::cout << "VERTEX SHADER" << std::endl;
     std::cout << source.vertexSource << std::endl;
@@ -155,19 +158,35 @@ void OpenGLWindow::init() {
     shader = CreateShader(source.vertexSource, source.fragmentSource);
     glUseProgram(shader);
 
+    cLoc = glGetUniformLocation(shader, "u_Color");
+    assert(cLoc != -1);
+    glUniform4f(cLoc, 0.8f, 0.3f, 0.8f, 1.0f);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void OpenGLWindow::pullEvents() {
+    float r = 0.0f;
+    float increment = 0.05f;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUniform4f(cLoc, r, 0.3f, 0.8f, 1.0f);
+
         //glDrawArrays(GL_TRIANGLES, bufNames[0], 3);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        if (r > 1.0f)
+            increment = -0.05f;
+        else if (r < 0.0f)
+            increment = 0.05f;
+
+        r += increment;
+
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
