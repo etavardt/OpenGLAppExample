@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include "OpenGLWindow.hpp"
+#include "OpenGLDebug.hpp"
+
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -101,6 +103,7 @@ OpenGLWindow::OpenGLWindow() {
     if (glewInit() != GLEW_OK) {
         std::cerr << "glewInit Failed" << std::endl;
     }
+    glDebug::initialize();
 
     std::cout << "OpenGLWindow Constructed" << std::endl;
 }
@@ -164,7 +167,7 @@ void OpenGLWindow::pullEvents() {
 
         //glDrawArrays(GL_TRIANGLES, bufNames[0], 3);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

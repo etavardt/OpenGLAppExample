@@ -23,6 +23,8 @@ file(GLOB SOURCE_FILES LIST_DIRECTORIES false
 add_executable (OpenGLApp ${SOURCE_FILES})
 target_link_libraries(OpenGLApp KewlF glfw3 glew32s ${OPENGL_LIBRARY})
 target_compile_definitions(OpenGLApp PUBLIC GLEW_STATIC)
+# TODO: Wrap in Debug test
+target_compile_definitions(OpenGLApp PUBLIC DEBUG_GL)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET OpenGLApp PROPERTY CXX_STANDARD 20)
