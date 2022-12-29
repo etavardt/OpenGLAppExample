@@ -1,17 +1,17 @@
 ﻿// OpenGLApp.cpp : Defines the entry point for the application.
 //
+#include "OpenGLApp.hpp"
 
 #include <iostream>
-#include "OpenGLApp.hpp"
-#include "OpenGLWindow.hpp"
+//#include "OpenGLWindow.hpp"
 
 OpenGLApp& OpenGLApp::openGLApp = OpenGLApp::getInstance();
 
 OpenGLApp::OpenGLApp() {
-	std::cout << "OpenGLApp Constructed" << std::endl;
+	//std::cout << "OpenGLApp Constructed" << std::endl;
 }
 OpenGLApp::~OpenGLApp() {
-	std::cout << "OpenGLApp Destructed" << std::endl;
+	//std::cout << "OpenGLApp Destructed" << std::endl;
 }
 
 OpenGLApp& OpenGLApp::getInstance() {

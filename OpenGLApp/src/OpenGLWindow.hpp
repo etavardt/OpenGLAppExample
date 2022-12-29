@@ -1,19 +1,22 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <KewlF/Window.hpp>
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 class OpenGLWindow : Window {
 private:
 	GLFWwindow* window;
 
-	GLsizei bufNamesSize = 1;
-	GLuint* bufNames = (GLuint*)alloca(bufNamesSize*sizeof(GLuint)); // bufNames[];
-	GLuint shader;
-	GLint cLoc;
+//	GLsizei bufNamesSize = 1;
+//	GLuint* bufNames = (GLuint*)alloca(bufNamesSize*sizeof(GLuint)); // bufNames[];
+	unsigned int shader; //GLuint
+	int cLoc; //GLint
     
-    GLuint ibo;
-    GLuint vao;
+    unsigned int ibo; //GLuint
+    unsigned int vao; //GLuint
     //Vertex Buffer
     float vertexBuf[8] = {
         -0.5f, -0.5f, //0
@@ -27,6 +30,9 @@ private:
         0,1,2,
         2,3,0
     };
+    VertexBuffer* vb;
+    IndexBuffer*  ib;
+
 
 public:
 	OpenGLWindow();
