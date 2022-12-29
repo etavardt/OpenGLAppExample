@@ -90,6 +90,11 @@ OpenGLWindow::OpenGLWindow() {
     if (!glfwInit())
         throw "Failed call to glfwInit";
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(1820, 1440, "OpenGL", NULL, NULL);
     if (!window)
@@ -121,19 +126,8 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    //Vertex Buffer
-    float vertexBuf[] = {
-        -0.5f, -0.5f, //0
-         0.5f, -0.5f, //1
-         0.5f,  0.5f, //2
-        -0.5f,  0.5f  //3
-    };
-
-    //Indices buffer
-    unsigned int indices[] = {
-        0,1,2,
-        2,3,0
-    };
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     glGenBuffers(bufNamesSize, bufNames);
     glBindBuffer(GL_ARRAY_BUFFER, *bufNames);
@@ -142,7 +136,6 @@ void OpenGLWindow::init() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2 , 0);
 
-    unsigned int ibo;
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -162,7 +155,13 @@ void OpenGLWindow::init() {
     assert(cLoc != -1);
     glUniform4f(cLoc, 0.8f, 0.3f, 0.8f, 1.0f);
 
+    //unbind for vertex array example from The Cherno's YT chnl
+    glBindVertexArray(0);
+    glUseProgram(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
 }
 
 void OpenGLWindow::pullEvents() {
@@ -174,7 +173,14 @@ void OpenGLWindow::pullEvents() {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUseProgram(shader);
         glUniform4f(cLoc, r, 0.3f, 0.8f, 1.0f);
+
+        //glBindBuffer(GL_ARRAY_BUFFER, *bufNames);
+        //glEnableVertexAttribArray(0);
+        //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
         //glDrawArrays(GL_TRIANGLES, bufNames[0], 3);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
