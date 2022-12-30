@@ -7,86 +7,6 @@
 #include <assert.h>
 #include "OpenGLDebug.hpp"
 #include "Renderer.hpp"
-//#include "VertexArray.hpp"
-//#include "VertexBuffer.hpp"
-//#include "IndexBuffer.hpp"
-
-struct ShaderProgramSource {
-    std::string vertexSource;
-    std::string fragmentSource;
-};
-
-static ShaderProgramSource ParseShader(const std::string& filepath) {
-    std::ifstream stream(filepath);
-    std::stringstream ss[2];
-
-    enum class ShaderType {
-        NONE = -1,
-        VERTEX = 0,
-        FRAGMENT = 1
-    };
-
-    ShaderType type = ShaderType::NONE;
-
-    std::string line;
-    while (getline(stream, line)) {
-        if (line.find("#shader") != std::string::npos) {
-            if (line.find("vertex") != std::string::npos) {
-                type = ShaderType::VERTEX;
-            } else if (line.find("fragment") != std::string::npos) {
-                type = ShaderType::FRAGMENT;
-            }
-        } else {
-            ss[(int)type] << line << "\n";
-        }
-    }
-
-    return { ss[0].str(), ss[1].str() };
-}
-
-static int CompileShader(GLuint type, const std::string& source) {
-    //std::assert(source);
-    GLuint id = glCreateShader(type);
-    const char* src = source.c_str();
-    GLCall(glShaderSource(id, 1, &src, nullptr));
-    GLCall(glCompileShader(id));
- 
-    //Syntax checking and Error handling
-    GLint result;
-    GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
-
-    GLint length;
-    if (result == GL_FALSE) {
-        GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
-        char* message = (char*)alloca(length * sizeof(char));
-
-        GLCall(glGetShaderInfoLog(id, length, &length, message));
-        std::cout << "Faild to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
-        std::cout << message << std::endl;
-        GLCall(glDeleteShader(id));
-        return 0;
-    }
-
-    return id;
-}
-static GLuint CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
-    GLuint progId = glCreateProgram();
-    GLuint vshaderId = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    GLuint fshaderId = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-    GLCall(glAttachShader(progId, vshaderId));
-    GLCall(glAttachShader(progId, fshaderId));
-    GLCall(glLinkProgram(progId));
-    GLCall(glValidateProgram(progId));
-
-    //GLCall(glDetachShader(progId, vshaderId));
-    //GLCall(glDetachShader(progId, fshaderId));
-
-    GLCall(glDeleteShader(vshaderId));
-    GLCall(glDeleteShader(fshaderId));
-
-    return progId;
-}
 
 OpenGLWindow::OpenGLWindow() {
     /* Initialize the library */
@@ -119,14 +39,16 @@ OpenGLWindow::OpenGLWindow() {
     vb = new VertexBuffer(vertexBuf, sizeof(vertexBuf));
     ib = new IndexBuffer(indices, 6);
     va = new VertexArray();
+    shader = new Shader("res/shaders/basic.shader");
     //std::cout << "OpenGLWindow Constructed" << std::endl;
 }
 
 OpenGLWindow::~OpenGLWindow() {
+    delete shader;
     delete va;
     delete ib;
     delete vb;
-    GLCall(glDeleteProgram(shader));
+
     glfwTerminate();
 
     //std::cout << "OpenGLWindow Destructed" << std::endl;
@@ -135,33 +57,20 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    GLCall(glGenVertexArrays(1, &vao));
-    GLCall(glBindVertexArray(vao));
-
+    //GLCall(glGenVertexArrays(1, &vao));
+    //GLCall(glBindVertexArray(vao));
+    va->bind();
     layout.push<float>(2);
     va->addBuffer(*vb, layout);
 
-    ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
-
-    //std::cout << "VERTEX SHADER" << std::endl;
-    //std::cout << source.vertexSource << std::endl;
-    //std::cout << "FRAGMENT SHADER" << std::endl;
-    //std::cout << source.fragmentSource << std::endl;
-
-    shader = CreateShader(source.vertexSource, source.fragmentSource);
-    GLCall(glUseProgram(shader));
-
-    cLoc = glGetUniformLocation(shader, "u_Color");
-    ASSERT(cLoc != -1);
-    GLCall(glUniform4f(cLoc, 0.8f, 0.3f, 0.8f, 1.0f));
+    shader->bind();
+    shader->setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
     //unbind for vertex array example from The Cherno's YT chnl
-    GLCall(glBindVertexArray(0));
-    GLCall(glUseProgram(0));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
-
+    va->unbind();
+    vb->unbind();
+    ib->unbind();
+    shader->unbind();
 }
 
 void OpenGLWindow::pullEvents() {
@@ -173,8 +82,8 @@ void OpenGLWindow::pullEvents() {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shader);
-        glUniform4f(cLoc, r, 0.3f, 0.8f, 1.0f);
+        shader->bind();
+        shader->setUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
         va->bind();
         ib->bind();
@@ -187,7 +96,6 @@ void OpenGLWindow::pullEvents() {
             increment = 0.05f;
 
         r += increment;
-
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
