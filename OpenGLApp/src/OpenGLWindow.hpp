@@ -3,8 +3,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <KewlF/Window.hpp>
-#include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
+#include "VertexBufferLayout.hpp"
 
 class OpenGLWindow : Window {
 private:
@@ -30,9 +32,10 @@ private:
         0,1,2,
         2,3,0
     };
+    VertexBufferLayout layout;
+    VertexArray* va;
     VertexBuffer* vb;
     IndexBuffer*  ib;
-
 
 public:
 	OpenGLWindow();

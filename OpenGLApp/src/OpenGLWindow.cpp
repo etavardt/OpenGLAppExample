@@ -7,8 +7,9 @@
 #include <assert.h>
 #include "OpenGLDebug.hpp"
 #include "Renderer.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
+//#include "VertexArray.hpp"
+//#include "VertexBuffer.hpp"
+//#include "IndexBuffer.hpp"
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -117,10 +118,12 @@ OpenGLWindow::OpenGLWindow() {
 
     vb = new VertexBuffer(vertexBuf, sizeof(vertexBuf));
     ib = new IndexBuffer(indices, 6);
+    va = new VertexArray();
     //std::cout << "OpenGLWindow Constructed" << std::endl;
 }
 
 OpenGLWindow::~OpenGLWindow() {
+    delete va;
     delete ib;
     delete vb;
     GLCall(glDeleteProgram(shader));
@@ -135,19 +138,15 @@ void OpenGLWindow::init() {
     GLCall(glGenVertexArrays(1, &vao));
     GLCall(glBindVertexArray(vao));
 
-//    VertexBuffer vb(vertexBuf, sizeof(vertexBuf));
-
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2 , 0));
-
-//    IndexBuffer ib(indices, 6);
+    layout.push<float>(2);
+    va->addBuffer(*vb, layout);
 
     ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
 
-    std::cout << "VERTEX SHADER" << std::endl;
-    std::cout << source.vertexSource << std::endl;
-    std::cout << "FRAGMENT SHADER" << std::endl;
-    std::cout << source.fragmentSource << std::endl;
+    //std::cout << "VERTEX SHADER" << std::endl;
+    //std::cout << source.vertexSource << std::endl;
+    //std::cout << "FRAGMENT SHADER" << std::endl;
+    //std::cout << source.fragmentSource << std::endl;
 
     shader = CreateShader(source.vertexSource, source.fragmentSource);
     GLCall(glUseProgram(shader));
@@ -177,7 +176,7 @@ void OpenGLWindow::pullEvents() {
         glUseProgram(shader);
         glUniform4f(cLoc, r, 0.3f, 0.8f, 1.0f);
 
-        glBindVertexArray(vao);
+        va->bind();
         ib->bind();
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
