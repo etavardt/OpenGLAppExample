@@ -7,6 +7,7 @@
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
+#include "Renderer.hpp"
 #include "Shader.hpp"
 
 class OpenGLWindow : Window {
@@ -38,6 +39,7 @@ private:
     VertexBuffer* vb;
     IndexBuffer*  ib;
     Shader* shader;
+    Renderer renderer;
 
 public:
 	OpenGLWindow();
