@@ -6,7 +6,6 @@
 #include <sstream>
 #include <assert.h>
 #include "OpenGLDebug.hpp"
-#include "Renderer.hpp"
 
 OpenGLWindow::OpenGLWindow() {
     /* Initialize the library */
@@ -40,6 +39,7 @@ OpenGLWindow::OpenGLWindow() {
     ib = new IndexBuffer(indices, 6);
     va = new VertexArray();
     shader = new Shader("res/shaders/basic.shader");
+    //renderer = new
     //std::cout << "OpenGLWindow Constructed" << std::endl;
 }
 
@@ -57,8 +57,6 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    //GLCall(glGenVertexArrays(1, &vao));
-    //GLCall(glBindVertexArray(vao));
     va->bind();
     layout.push<float>(2);
     va->addBuffer(*vb, layout);
@@ -80,15 +78,16 @@ void OpenGLWindow::pullEvents() {
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear();
 
         shader->bind();
         shader->setUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        va->bind();
-        ib->bind();
+        //va->bind();
+        //ib->bind();
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        renderer.draw(*va, *ib, *shader);
 
         if (r > 1.0f)
             increment = -0.05f;
