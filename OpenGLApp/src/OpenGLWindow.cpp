@@ -39,11 +39,14 @@ OpenGLWindow::OpenGLWindow() {
     ib = new IndexBuffer(indices, 6);
     va = new VertexArray();
     shader = new Shader("res/shaders/basic.shader");
+    texture = new Texture("res/textures/newday2.bmp"); // _MG_1005.bmp
     //renderer = new
+  
     //std::cout << "OpenGLWindow Constructed" << std::endl;
 }
 
 OpenGLWindow::~OpenGLWindow() {
+    delete texture;
     delete shader;
     delete va;
     delete ib;
@@ -57,12 +60,19 @@ OpenGLWindow::~OpenGLWindow() {
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+    GLCall(glEnable(GL_BLEND));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
     va->bind();
-    layout.push<float>(2);
+    layout.push<float>(2); // vertices
+    layout.push<float>(2); // texture mapping
     va->addBuffer(*vb, layout);
 
     shader->bind();
     shader->setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+
+    texture->bind();
+    shader->setUniform1i("u_Texture", 0);
 
     //unbind for vertex array example from The Cherno's YT chnl
     va->unbind();

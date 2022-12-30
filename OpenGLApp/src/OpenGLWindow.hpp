@@ -9,6 +9,7 @@
 #include "VertexBufferLayout.hpp"
 #include "Renderer.hpp"
 #include "Shader.hpp"
+#include "Texture.hpp"
 
 class OpenGLWindow : Window {
 private:
@@ -22,11 +23,11 @@ private:
     //unsigned int ibo; //GLuint
     //unsigned int vao; //GLuint
     //Vertex Buffer
-    float vertexBuf[8] = {
-        -0.5f, -0.5f, //0
-         0.5f, -0.5f, //1
-         0.5f,  0.5f, //2
-        -0.5f,  0.5f  //3
+    float vertexBuf[16] = {
+        -0.5f, -0.5f, 0.0f, 0.0f, //0
+         0.5f, -0.5f, 1.0f, 0.0f, //1
+         0.5f,  0.5f, 1.0f, 1.0f, //2
+        -0.5f,  0.5f, 0.0f, 1.0f  //3
     };
 
     //Indices buffer
@@ -40,6 +41,7 @@ private:
     IndexBuffer*  ib;
     Shader* shader;
     Renderer renderer;
+    Texture* texture;
 
 public:
 	OpenGLWindow();
