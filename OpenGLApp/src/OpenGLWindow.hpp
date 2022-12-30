@@ -7,6 +7,7 @@
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
+#include "Shader.hpp"
 
 class OpenGLWindow : Window {
 private:
@@ -14,11 +15,11 @@ private:
 
 //	GLsizei bufNamesSize = 1;
 //	GLuint* bufNames = (GLuint*)alloca(bufNamesSize*sizeof(GLuint)); // bufNames[];
-	unsigned int shader; //GLuint
-	int cLoc; //GLint
+	//unsigned int shader; //GLuint
+	//int cLoc; //GLint
     
-    unsigned int ibo; //GLuint
-    unsigned int vao; //GLuint
+    //unsigned int ibo; //GLuint
+    //unsigned int vao; //GLuint
     //Vertex Buffer
     float vertexBuf[8] = {
         -0.5f, -0.5f, //0
@@ -36,6 +37,7 @@ private:
     VertexArray* va;
     VertexBuffer* vb;
     IndexBuffer*  ib;
+    Shader* shader;
 
 public:
 	OpenGLWindow();
