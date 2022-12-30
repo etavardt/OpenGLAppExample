@@ -4,14 +4,17 @@
 #include <sstream>
 #include <GL/glew.h>
 
+#include <KewlF/Logger.hpp>
+
 void glClearError() {
     while (glGetError() != GL_NO_ERROR);
 }
 
 bool glLogCall(const char* function, const char* file, int line) {
     while (GLenum error = glGetError()) {
-        std::cout << "[OpenGL Error] (" << error << "): " << function
-            << " " << file << ":" << line << std::endl;
+        if (glDebug::isEnabled()) {
+            LOG(ERROR) << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << std::endl;
+        }
         return false;
     }
     return true;
@@ -19,7 +22,7 @@ bool glLogCall(const char* function, const char* file, int line) {
 
 namespace glDebug {
 
-#if DEBUG_GL
+#if defined KEWLF_DEBUG && defined DEBUG_GL
     static bool g_enable = true;
 #else
     static bool g_enable = false;
@@ -49,7 +52,7 @@ namespace glDebug {
     void glLogErrorMessage() {
         if (isEnabled()) {
             if (GLenum error = glGetError()) {
-                std::cout << "ERROR: " << "GL error: " << error << " = " << glGetErrorString(error) << std::endl;
+                LOG(ERROR) << "GL error: " << error << " = " << glGetErrorString(error) << std::endl;
             }
         }
     }
@@ -64,7 +67,7 @@ namespace glDebug {
         case GL_DEBUG_SOURCE_THIRD_PARTY:     return "Third-party";
         case GL_DEBUG_SOURCE_APPLICATION:     return "Application";
         case GL_DEBUG_SOURCE_OTHER:           return "Other";
-        default:                                  return "(unknown)";
+        default:                              return "(unknown)";
         }
     }
 
@@ -86,26 +89,19 @@ namespace glDebug {
         std::string curMessage;
         static std::string prevMessage;
 
-        //const GLchar* end = message + std::strlen(message);
-        //while (end != message && (*(end - 1) == '\r' || *(end - 1) == '\n')) {
-        //    end--;
-        //}
-
-        //buffer << sourceToString(source) << " " << typeToString(type) << " #" << id << ": ";
-        //buffer.write(message, end - message);
         buffer << sourceToString(source) << " " << typeToString(type) << " #" << id << ": " << message;
 
         curMessage = buffer.str();
         if (curMessage != prevMessage) {
             switch (severity) {
             case GL_DEBUG_SEVERITY_HIGH:
-                std::cout << "ERROR: " << curMessage << std::endl;
+                LOG(ERROR) << curMessage << std::endl;
                 break;
             case GL_DEBUG_SEVERITY_MEDIUM:
-                std::cout << "WARNING: " << curMessage << std::endl;
+                LOG(WARNING) << curMessage << std::endl;
                 break;
             case GL_DEBUG_SEVERITY_LOW:
-                std::cout << "INFO: " << curMessage << std::endl;
+                LOG(INFO) << curMessage << std::endl;
                 break;
             default:
                 break;
@@ -125,7 +121,7 @@ namespace glDebug {
             bool has_debug = ((majVers > 4) || (majVers == 4 && minVers >= 3));
 
             if (!has_debug) {
-                std::cout << "WARNING: " << "OpenGL debug output not available";
+                LOG(WARNING) << "OpenGL debug output not available";
                 return;
             }
 
@@ -151,7 +147,7 @@ namespace glDebug {
 #else // GL_KHR_debug
 
     void initialize() {
-        std::cout << "WARNING: " << "OpenGL debug message output is not supported." << std::endl;
+        LOG(WARNING) << "OpenGL debug message output is not supported." << std::endl;
     }
 
 #endif

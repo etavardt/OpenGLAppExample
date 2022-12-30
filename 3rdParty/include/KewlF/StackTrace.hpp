@@ -2,7 +2,7 @@
 
 #include "String.hpp"
 
-#ifdef DEBUG && BACKTRACE
+#if defined DEBUG && defined BACKTRACE
 #include <backtrace.h>
 
 #include "App.hpp"
