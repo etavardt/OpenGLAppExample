@@ -1,12 +1,15 @@
-#include <GL\glew.h>
+#include "OpenGLWindow.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <assert.h>
-#include "OpenGLWindow.hpp"
 #include "OpenGLDebug.hpp"
-
+#include "Renderer.hpp"
+//#include "VertexArray.hpp"
+//#include "VertexBuffer.hpp"
+//#include "IndexBuffer.hpp"
 
 struct ShaderProgramSource {
     std::string vertexSource;
@@ -45,22 +48,22 @@ static int CompileShader(GLuint type, const std::string& source) {
     //std::assert(source);
     GLuint id = glCreateShader(type);
     const char* src = source.c_str();
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);
+    GLCall(glShaderSource(id, 1, &src, nullptr));
+    GLCall(glCompileShader(id));
  
     //Syntax checking and Error handling
     GLint result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+    GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 
     GLint length;
     if (result == GL_FALSE) {
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+        GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
         char* message = (char*)alloca(length * sizeof(char));
 
-        glGetShaderInfoLog(id, length, &length, message);
+        GLCall(glGetShaderInfoLog(id, length, &length, message));
         std::cout << "Faild to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
         std::cout << message << std::endl;
-        glDeleteShader(id);
+        GLCall(glDeleteShader(id));
         return 0;
     }
 
@@ -71,16 +74,16 @@ static GLuint CreateShader(const std::string& vertexShader, const std::string& f
     GLuint vshaderId = CompileShader(GL_VERTEX_SHADER, vertexShader);
     GLuint fshaderId = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-    glAttachShader(progId, vshaderId);
-    glAttachShader(progId, fshaderId);
-    glLinkProgram(progId);
-    glValidateProgram(progId);
+    GLCall(glAttachShader(progId, vshaderId));
+    GLCall(glAttachShader(progId, fshaderId));
+    GLCall(glLinkProgram(progId));
+    GLCall(glValidateProgram(progId));
 
-    //glDetachShader(progId, vshaderId);
-    //glDetachShader(progId, fshaderId);
+    //GLCall(glDetachShader(progId, vshaderId));
+    //GLCall(glDetachShader(progId, fshaderId));
 
-    glDeleteShader(vshaderId);
-    glDeleteShader(fshaderId);
+    GLCall(glDeleteShader(vshaderId));
+    GLCall(glDeleteShader(fshaderId));
 
     return progId;
 }
@@ -89,6 +92,11 @@ OpenGLWindow::OpenGLWindow() {
     /* Initialize the library */
     if (!glfwInit())
         throw "Failed call to glfwInit";
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(1820, 1440, "OpenGL", NULL, NULL);
@@ -108,61 +116,52 @@ OpenGLWindow::OpenGLWindow() {
     }
     glDebug::initialize();
 
-    std::cout << "OpenGLWindow Constructed" << std::endl;
+    vb = new VertexBuffer(vertexBuf, sizeof(vertexBuf));
+    ib = new IndexBuffer(indices, 6);
+    va = new VertexArray();
+    //std::cout << "OpenGLWindow Constructed" << std::endl;
 }
 
 OpenGLWindow::~OpenGLWindow() {
-    glDeleteProgram(shader);
+    delete va;
+    delete ib;
+    delete vb;
+    GLCall(glDeleteProgram(shader));
     glfwTerminate();
 
-    std::cout << "OpenGLWindow Destructed" << std::endl;
+    //std::cout << "OpenGLWindow Destructed" << std::endl;
 }
 
 void OpenGLWindow::init() {
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    //Vertex Buffer
-    float vertexBuf[] = {
-        -0.5f, -0.5f, //0
-         0.5f, -0.5f, //1
-         0.5f,  0.5f, //2
-        -0.5f,  0.5f  //3
-    };
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
 
-    //Indices buffer
-    unsigned int indices[] = {
-        0,1,2,
-        2,3,0
-    };
+    layout.push<float>(2);
+    va->addBuffer(*vb, layout);
 
-    glGenBuffers(bufNamesSize, bufNames);
-    glBindBuffer(GL_ARRAY_BUFFER, *bufNames);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuf), vertexBuf,GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2 , 0);
-
-    unsigned int ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    //ShaderProgramSource source = ParseShader("res/shaders/basicRedTri.shader");
     ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
 
-    std::cout << "VERTEX SHADER" << std::endl;
-    std::cout << source.vertexSource << std::endl;
-    std::cout << "FRAGMENT SHADER" << std::endl;
-    std::cout << source.fragmentSource << std::endl;
+    //std::cout << "VERTEX SHADER" << std::endl;
+    //std::cout << source.vertexSource << std::endl;
+    //std::cout << "FRAGMENT SHADER" << std::endl;
+    //std::cout << source.fragmentSource << std::endl;
 
     shader = CreateShader(source.vertexSource, source.fragmentSource);
-    glUseProgram(shader);
+    GLCall(glUseProgram(shader));
 
     cLoc = glGetUniformLocation(shader, "u_Color");
-    assert(cLoc != -1);
-    glUniform4f(cLoc, 0.8f, 0.3f, 0.8f, 1.0f);
+    ASSERT(cLoc != -1);
+    GLCall(glUniform4f(cLoc, 0.8f, 0.3f, 0.8f, 1.0f));
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //unbind for vertex array example from The Cherno's YT chnl
+    GLCall(glBindVertexArray(0));
+    GLCall(glUseProgram(0));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
+
 }
 
 void OpenGLWindow::pullEvents() {
@@ -174,10 +173,12 @@ void OpenGLWindow::pullEvents() {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUseProgram(shader);
         glUniform4f(cLoc, r, 0.3f, 0.8f, 1.0f);
 
-        //glDrawArrays(GL_TRIANGLES, bufNames[0], 3);
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        va->bind();
+        ib->bind();
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         if (r > 1.0f)
