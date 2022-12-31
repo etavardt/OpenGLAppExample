@@ -11,7 +11,10 @@
 #include "OpenGLDebug.hpp"
 #include "KewlF/Logger.hpp"
 
-OpenGLWindow::OpenGLWindow() {
+//OpenGLWindow::OpenGLWindow() : width(2048), height(1536) {
+OpenGLWindow::OpenGLWindow() : width(800) , height(800) {
+
+
     /* Initialize the library */
     if (!glfwInit())
         throw "Failed call to glfwInit";
@@ -22,7 +25,7 @@ OpenGLWindow::OpenGLWindow() {
 
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1820, 1440, "OpenGL", NULL, NULL);
+    window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -39,11 +42,25 @@ OpenGLWindow::OpenGLWindow() {
     }
     glDebug::initialize();
 
-    vb = new VertexBuffer(vertexBuf, sizeof(vertexBuf));
+    // Scale and Translate positions
+    for (int i = 0; i < vertexBuf.size(); i += 4) {
+        // Scale positions
+        vertexBuf[i] *= 500;
+        vertexBuf[i + 1] *= 500;
+        // Translate positions
+        vertexBuf[i] += width / 2;
+        vertexBuf[i + 1] += height / 2;
+
+    }
+
+    vb = new VertexBuffer(vertexBuf.data(), sizeof(vertexBuf));
     ib = new IndexBuffer(indices, 6);
     va = new VertexArray();
     shader = new Shader("res/shaders/basic.shader");
-    texture = new Texture("res/textures/newday2.bmp"); // _MG_1005.bmp
+    //texture = new Texture("res/textures/_MG_1005.bmp");
+    //texture = new Texture("res/textures/newday2.bmp");
+    texture = new Texture("res/textures/Superfluous-Organ-1.jpg");
+    
     //renderer = new
   
     //std::cout << "OpenGLWindow Constructed" << std::endl;
@@ -65,8 +82,11 @@ void OpenGLWindow::init() {
     LOG(INFO) << glGetString(GL_VERSION) << std::endl;
 
     // Set Projection Matrix
-    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // Orthographic Projection
+    glm::mat4 proj = glm::ortho(0.0f, width*1.0f, 0.0f, height*1.0f, -1.0f, 1.0f); // Orthographic Projection
+    //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // Orthographic Projection
     //glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f); // Orthographic Projection
+    //glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
+    //glm::vec4 result = proj * vp;
 
     // Setup Blending
     GLCall(glEnable(GL_BLEND));

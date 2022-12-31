@@ -14,10 +14,10 @@ Shader::Shader() : m_RendererID(0) {
 
 Shader::Shader(const std::string& filepath) : m_Filepath(filepath), m_RendererID(0) {
     ShaderProgramSource source = ParseShader(filepath);
-    //std::cout << "VERTEX SHADER" << std::endl;
-    //std::cout << source.vertexSource << std::endl;
-    //std::cout << "FRAGMENT SHADER" << std::endl;
-    //std::cout << source.fragmentSource << std::endl;
+    std::cout << "VERTEX SHADER" << std::endl;
+    std::cout << source.vertexSource << std::endl;
+    std::cout << "FRAGMENT SHADER" << std::endl;
+    std::cout << source.fragmentSource << std::endl;
     m_RendererID = CreateShader(source.vertexSource, source.fragmentSource);
 
 }
