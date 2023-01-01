@@ -156,14 +156,11 @@ void OpenGLWindow::pullEvents() {
     float r = 0.0f;
     float increment = 0.05f;
 
-    // Our state
-    //bool show_demo_window = true;
-    //bool show_another_window = true;
-
     // imgui window clear_color
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    glm::vec3 translation(0.0f, 0.0f, 0.0f);
+    glm::vec3 translationA(-350.0f, 0.0f, 0.0f);
+    glm::vec3 translationB(350.0f, 0.0f, 0.0f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -176,80 +173,39 @@ void OpenGLWindow::pullEvents() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        model = glm::translate(glm::mat4(1.0f), translation);
-        mvp = proj * view * model;
+        {
+            model = glm::translate(glm::mat4(1.0f), translationA);
+            mvp = proj * view * model;
+            shader->bind();
+            shader->setUniformMat4f("u_MVP", mvp);
 
-        shader->bind();
-        shader->setUniformMat4f("u_MVP", mvp);
-        /* // Animate color change
-        // Bind Shader to make changes
-        shader->bind();
-        shader->setUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-        */
+            renderer.draw(*va, *ib, *shader);
+        }
 
-        renderer.draw(*va, *ib, *shader);
+        {
+            model = glm::translate(glm::mat4(1.0f), translationB);
+            mvp = proj * view * model;
+            shader->bind();
+            shader->setUniformMat4f("u_MVP", mvp);
 
-        /* // Animate color
-        if (r > 1.0f)
-            increment = -0.05f;
-        else if (r < 0.0f)
-            increment = 0.05f;
-
-        r += increment;
-        */
-        /*
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
+            renderer.draw(*va, *ib, *shader);
+        }
 
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
-        }
-
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
-            ImGui::End();
-        }
-        */
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        {
-            //ImGui::Begin("Debug Window");
-            //ImGui::SliderFloat3("Translation", &translation.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::SliderFloat("X Translation", &translation.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::SliderFloat("Y Translation", &translation.y, -hh, hh);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::SliderFloat("Image 1 - X Translation", &translationA.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::SliderFloat("Image 1 - Y Translation", &translationA.y, -hh, hh);            // Edit 1 float using a slider from 0.0f to 1.0f
             //ImGui::SliderFloat("Z Translation", &translation.z, -hz, hz);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::SliderFloat("Image 2 - X Translation", &translationB.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::SliderFloat("Image 2 - Y Translation", &translationB.y, -hh, hh);            // Edit 1 float using a slider from 0.0f to 1.0f
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            //ImGui::End();
         }
 
         // Rendering
         ImGui::Render();
+
         //int display_w, display_h;
         //glfwGetFramebufferSize(window, &display_w, &display_h);
         //glViewport(0, 0, display_w, display_h);
