@@ -11,9 +11,8 @@
 #include "OpenGLDebug.hpp"
 #include "KewlF/Logger.hpp"
 
-//OpenGLWindow::OpenGLWindow() : width(2048), height(1536) {
-OpenGLWindow::OpenGLWindow() : width(800) , height(800) {
-
+//OpenGLWindow::OpenGLWindow() : width(800) , height(800) {
+OpenGLWindow::OpenGLWindow() : width(2048), height(1536) {
 
     /* Initialize the library */
     if (!glfwInit())
@@ -48,8 +47,8 @@ OpenGLWindow::OpenGLWindow() : width(800) , height(800) {
         vertexBuf[i] *= 500;
         vertexBuf[i + 1] *= 500;
         // Translate positions
-        vertexBuf[i] += width / 2;
-        vertexBuf[i + 1] += height / 2;
+        //vertexBuf[i] += width / 2;
+        //vertexBuf[i + 1] += height / 2;
 
     }
 
@@ -82,11 +81,28 @@ void OpenGLWindow::init() {
     LOG(INFO) << glGetString(GL_VERSION) << std::endl;
 
     // Set Projection Matrix
-    glm::mat4 proj = glm::ortho(0.0f, width*1.0f, 0.0f, height*1.0f, -1.0f, 1.0f); // Orthographic Projection
     //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // Orthographic Projection
     //glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f); // Orthographic Projection
     //glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
     //glm::vec4 result = proj * vp;
+    //glm::mat4 view = glm::translate(glm::vec3(-100.0f, 0.0f, 0.0f));
+
+//    glm::mat4 proj = glm::ortho(0.0f, width * 1.0f, 0.0f, height * 1.0f, -1.0f, 1.0f); // Orthographic Projection
+//    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
+//    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 0.0f));
+
+//    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(100.0f, 0.0f, 0.0f));
+//    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, -100.0f, 0.0f));
+    // Start Center of screen
+    float hw = this->width * 0.5f; // width/2.0f
+    float hh = this->height * 0.5f; // height/2.0f
+    glm::mat4 proj  = glm::ortho(-hw, hw, -hh, hh, -1.0f, 1.0f); // Orthographic Projection
+    glm::mat4 view  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+    //glm::mat4 mvp = proj;
+    //glm::mat4 mvp = model * view * proj; // not on screen because it is not reversed from mvp due to opengl and memory layout for math
+    glm::mat4 mvp = proj * view * model; // reversed from mvp due to opengl and memory layout for math
 
     // Setup Blending
     GLCall(glEnable(GL_BLEND));
@@ -101,7 +117,8 @@ void OpenGLWindow::init() {
     // Setup a Shader
     shader->bind();
     shader->setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-    shader->setUniformMat4f("u_MVP", proj);
+//    shader->setUniformMat4f("u_MVP", proj);
+    shader->setUniformMat4f("u_MVP", mvp);
 
     // Setup a Texture
     texture->bind();
