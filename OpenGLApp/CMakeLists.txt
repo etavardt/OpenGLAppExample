@@ -5,6 +5,7 @@
 include_directories(
     src/
     ../3rdParty/include/
+    ../3rdParty/imgui/src/
 )
 
 #link_directories([AFTER|BEFORE] directory1 [directory2 ...])
@@ -17,6 +18,8 @@ file(GLOB SOURCE_FILES LIST_DIRECTORIES false
     src/*.cpp
     src/*.h
     src/*.hpp
+    ../3rdParty/imgui/src/*.cpp
+    ../3rdParty/imgui/src/*.h
 )
 
 # Add source to this project's executable.
