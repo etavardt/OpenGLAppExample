@@ -40,6 +40,7 @@ private:
         0,1,2,
         2,3,0
     };
+
     VertexBufferLayout layout;
     VertexArray* va;
     VertexBuffer* vb;
@@ -48,6 +49,13 @@ private:
     Renderer renderer;
     Texture* texture;
 
+    glm::mat4 proj;
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 mvp;
+
+    float hw = 0;
+    float hh = 0;
 public:
 	OpenGLWindow();
 	~OpenGLWindow();
