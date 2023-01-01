@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <KewlF/Window.hpp>
+#include <array>
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
@@ -15,6 +16,8 @@ class OpenGLWindow : Window {
 private:
 	GLFWwindow* window;
 
+    unsigned int width;
+    unsigned int height;
 //	GLsizei bufNamesSize = 1;
 //	GLuint* bufNames = (GLuint*)alloca(bufNamesSize*sizeof(GLuint)); // bufNames[];
 	//unsigned int shader; //GLuint
@@ -23,7 +26,9 @@ private:
     //unsigned int ibo; //GLuint
     //unsigned int vao; //GLuint
     //Vertex Buffer
-    float vertexBuf[16] = {
+    //float* vertexBuf;
+    //float vertexBuf[16] = {
+    std::array<float, 16> vertexBuf = {
         -0.5f, -0.5f, 0.0f, 0.0f, //0
          0.5f, -0.5f, 1.0f, 0.0f, //1
          0.5f,  0.5f, 1.0f, 1.0f, //2

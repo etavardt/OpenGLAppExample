@@ -5,9 +5,15 @@
 #include <string>
 #include <sstream>
 #include <assert.h>
-#include "OpenGLDebug.hpp"
 
-OpenGLWindow::OpenGLWindow() {
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include "OpenGLDebug.hpp"
+#include "KewlF/Logger.hpp"
+
+//OpenGLWindow::OpenGLWindow() : width(800) , height(800) {
+OpenGLWindow::OpenGLWindow() : width(2048), height(1536) {
+
     /* Initialize the library */
     if (!glfwInit())
         throw "Failed call to glfwInit";
@@ -18,7 +24,7 @@ OpenGLWindow::OpenGLWindow() {
 
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1820, 1440, "OpenGL", NULL, NULL);
+    window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -35,11 +41,25 @@ OpenGLWindow::OpenGLWindow() {
     }
     glDebug::initialize();
 
-    vb = new VertexBuffer(vertexBuf, sizeof(vertexBuf));
+    // Scale and Translate positions
+    for (int i = 0; i < vertexBuf.size(); i += 4) {
+        // Scale positions
+        vertexBuf[i] *= 500;
+        vertexBuf[i + 1] *= 500;
+        // Translate positions
+        //vertexBuf[i] += width / 2;
+        //vertexBuf[i + 1] += height / 2;
+
+    }
+
+    vb = new VertexBuffer(vertexBuf.data(), sizeof(vertexBuf));
     ib = new IndexBuffer(indices, 6);
     va = new VertexArray();
     shader = new Shader("res/shaders/basic.shader");
-    texture = new Texture("res/textures/newday2.bmp"); // _MG_1005.bmp
+    //texture = new Texture("res/textures/_MG_1005.bmp");
+    //texture = new Texture("res/textures/newday2.bmp");
+    texture = new Texture("res/textures/Superfluous-Organ-1.jpg");
+    
     //renderer = new
   
     //std::cout << "OpenGLWindow Constructed" << std::endl;
@@ -58,23 +78,53 @@ OpenGLWindow::~OpenGLWindow() {
 }
 
 void OpenGLWindow::init() {
-    std::cout << glGetString(GL_VERSION) << std::endl;
+    LOG(INFO) << glGetString(GL_VERSION) << std::endl;
 
+    // Set Projection Matrix
+    //glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // Orthographic Projection
+    //glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f); // Orthographic Projection
+    //glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
+    //glm::vec4 result = proj * vp;
+    //glm::mat4 view = glm::translate(glm::vec3(-100.0f, 0.0f, 0.0f));
+
+//    glm::mat4 proj = glm::ortho(0.0f, width * 1.0f, 0.0f, height * 1.0f, -1.0f, 1.0f); // Orthographic Projection
+//    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
+//    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 0.0f));
+
+//    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(100.0f, 0.0f, 0.0f));
+//    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, -100.0f, 0.0f));
+    // Start Center of screen
+    float hw = this->width * 0.5f; // width/2.0f
+    float hh = this->height * 0.5f; // height/2.0f
+    glm::mat4 proj  = glm::ortho(-hw, hw, -hh, hh, -1.0f, 1.0f); // Orthographic Projection
+    glm::mat4 view  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+    //glm::mat4 mvp = proj;
+    //glm::mat4 mvp = model * view * proj; // not on screen because it is not reversed from mvp due to opengl and memory layout for math
+    glm::mat4 mvp = proj * view * model; // reversed from mvp due to opengl and memory layout for math
+
+    // Setup Blending
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+    // Setup a Vertex Array
     va->bind();
     layout.push<float>(2); // vertices
     layout.push<float>(2); // texture mapping
     va->addBuffer(*vb, layout);
 
+    // Setup a Shader
     shader->bind();
     shader->setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+//    shader->setUniformMat4f("u_MVP", proj);
+    shader->setUniformMat4f("u_MVP", mvp);
 
+    // Setup a Texture
     texture->bind();
     shader->setUniform1i("u_Texture", 0);
 
-    //unbind for vertex array example from The Cherno's YT chnl
+    // Unbind once setup
     va->unbind();
     vb->unbind();
     ib->unbind();
@@ -90,21 +140,22 @@ void OpenGLWindow::pullEvents() {
         /* Render here */
         renderer.clear();
 
+        /* // Animate color change
+        // Bind Shader to make changes
         shader->bind();
         shader->setUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-
-        //va->bind();
-        //ib->bind();
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        */
 
         renderer.draw(*va, *ib, *shader);
 
+        /* // Animate color
         if (r > 1.0f)
             increment = -0.05f;
         else if (r < 0.0f)
             increment = 0.05f;
 
         r += increment;
+        */
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

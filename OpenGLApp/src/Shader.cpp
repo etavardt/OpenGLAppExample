@@ -14,10 +14,10 @@ Shader::Shader() : m_RendererID(0) {
 
 Shader::Shader(const std::string& filepath) : m_Filepath(filepath), m_RendererID(0) {
     ShaderProgramSource source = ParseShader(filepath);
-    //std::cout << "VERTEX SHADER" << std::endl;
-    //std::cout << source.vertexSource << std::endl;
-    //std::cout << "FRAGMENT SHADER" << std::endl;
-    //std::cout << source.fragmentSource << std::endl;
+    std::cout << "VERTEX SHADER" << std::endl;
+    std::cout << source.vertexSource << std::endl;
+    std::cout << "FRAGMENT SHADER" << std::endl;
+    std::cout << source.fragmentSource << std::endl;
     m_RendererID = CreateShader(source.vertexSource, source.fragmentSource);
 
 }
@@ -46,6 +46,11 @@ void Shader::setUniform1f(const std::string& name, float value) {
 void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GLCall(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
 }
+
+void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
+    GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
 
 int Shader::getUniformLocation(const std::string& name) {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
