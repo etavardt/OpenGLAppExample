@@ -4,6 +4,7 @@
 
 include_directories(
     src/
+    tests/
     ../3rdParty/include/
     ../3rdParty/imgui/src/
 )
@@ -18,6 +19,9 @@ file(GLOB SOURCE_FILES LIST_DIRECTORIES false
     src/*.cpp
     src/*.h
     src/*.hpp
+    tests/*.cpp
+    tests/*.h
+    tests/*.hpp
     ../3rdParty/imgui/src/*.cpp
     ../3rdParty/imgui/src/*.h
 )

@@ -1,0 +1,3 @@
+[submodule "3rdParty/KewlFLib"]
+	path = 3rdParty/KewlFLib
+	url = https://github.com/etavardt/KewlFLib.git
