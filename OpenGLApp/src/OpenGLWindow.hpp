@@ -3,7 +3,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <KewlF/Window.hpp>
-#include <array>
+#include <vector>
+//#include <array>
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
@@ -28,7 +29,8 @@ private:
     //Vertex Buffer
     //float* vertexBuf;
     //float vertexBuf[16] = {
-    std::array<float, 16> vertexBuf = {
+    //std::array<float, 16> vertexBuf = {
+    std::vector<float> vertexBuf = {
         -0.5f, -0.5f, 0.0f, 0.0f, //0
          0.5f, -0.5f, 1.0f, 0.0f, //1
          0.5f,  0.5f, 1.0f, 1.0f, //2

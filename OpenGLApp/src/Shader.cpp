@@ -14,10 +14,10 @@ Shader::Shader() : m_RendererID(0) {
 
 Shader::Shader(const std::string& filepath) : m_Filepath(filepath), m_RendererID(0) {
     ShaderProgramSource source = ParseShader(filepath);
-    std::cout << "VERTEX SHADER" << std::endl;
-    std::cout << source.vertexSource << std::endl;
-    std::cout << "FRAGMENT SHADER" << std::endl;
-    std::cout << source.fragmentSource << std::endl;
+    //std::cout << "VERTEX SHADER" << std::endl;
+    //std::cout << source.vertexSource << std::endl;
+    //std::cout << "FRAGMENT SHADER" << std::endl;
+    //std::cout << source.fragmentSource << std::endl;
     m_RendererID = CreateShader(source.vertexSource, source.fragmentSource);
 
 }
@@ -114,6 +114,10 @@ int Shader::CompileShader(unsigned int type, const std::string& source) {
         GLCall(glGetShaderInfoLog(id, length, &length, message));
         std::cout << "Faild to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
         std::cout << message << std::endl;
+
+        std::cout << (type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT") << " SHADER" << std::endl;
+        std::cout << source << std::endl;
+
         GLCall(glDeleteShader(id));
         return 0;
     }
