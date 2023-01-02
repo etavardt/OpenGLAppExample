@@ -2,49 +2,9 @@
 # project specific logic here.
 #
 
-include(FetchContent)
+# Include sub-projects.
+add_subdirectory ("KewlFLib/KewlF")
 
-#find_package(backtrace REQUIRED)
+# can a post build call for KewlF be done here?
+# even though the lib in found automaticaly do it as well as the header files.
 
-#FetchContent_Declare(
-#    libbacktrace
-#    GIT_REPOSITORY https://github.com/etavardt/libbacktrace.git
-#    #GIT_TAG        ???
-#)
-
-## Check if population has already been performed
-#FetchContent_GetProperties(libbacktrace)
-#string(TOLOWER "libbacktrace" lcName)
-#if(NOT ${lcName}_POPULATED)
-
-# Fetch the content using previously declared details
-# FetchContent_Populate(libbacktrace)
-
-#  # Set custom variables, policies, etc.
-#  # ...
-
-#  # Bring the populated content into the build
-#  add_subdirectory(${${lcName}_SOURCE_DIR} ${${lcName}_BINARY_DIR})
-#endif()
-
-#FetchContent_Declare(
-#    KewlFLib
-#    GIT_REPOSITORY https://github.com/etavardt/KewlFLib.git
-#)
-
-#FetchContent_Declare(
-#    glfw
-#    GIT_REPOSITORY https://github.com/glfw/glfw.git
-#)
-
-#FetchContent_Declare(
-#    glew
-#    GIT_REPOSITORY https://github.com/nigels-com/glew.git
-#)
-
-#FetchContent_Declare(
-#    glm
-#    GIT_REPOSITORY https://github.com/g-truc/glm.git
-#)
-
-#FetchContent_MakeAvailable(KewlFLib glfw glew glm)

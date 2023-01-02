@@ -34,7 +34,7 @@ Texture::Texture(const std::string& path) : m_RendererID(0), m_Filepath(path), m
 
 Texture::~Texture() {
 	GLCall(glDeleteTextures(1, &m_RendererID));
-	LOG(INFO) << "Destruct Texture";
+	LOG(INFO) << "Destruct Texture" << std::endl;
 }
 
 void Texture::bind(unsigned int slot /*= 0*/) const {

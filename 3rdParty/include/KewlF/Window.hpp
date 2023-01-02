@@ -32,7 +32,7 @@ protected:
 
 public:
     Window();
-    ~Window();
+    virtual ~Window();
 
     bool toggleFullScreen();
 
