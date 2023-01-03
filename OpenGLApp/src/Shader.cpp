@@ -84,29 +84,14 @@ void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
 }
 
 // The purpous of this function is to keep from hitting a high performace hit call (glGetUniformLocation) by using a cached value.
-// optimized using YouTubeId(@jonasdaverio9369)
+// optimized using YouTubeId(@jonasdaverio9369) suggestion.
 int Shader::getUniformLocation(const std::string& name) {
-
     auto uniform{ m_UniformLocationCache.try_emplace(name, 0) };
 
     if (uniform.second)
         return (uniform.first->second = glGetUniformLocation(m_RendererID, name.c_str()));
 
     return uniform.first->second;
-
-/*
-    auto it = m_UniformLocationCache.find(name);
-    if (it != m_UniformLocationCache.end())
-        return it->second;
-
-    GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
-    if (location == -1) {
-        std::cout << "WARNING: uniform '" << name << "' doesn't exist!" << std::endl;
-    }
-    m_UniformLocationCache[name] = location;
-
-    return location;
-*/
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {

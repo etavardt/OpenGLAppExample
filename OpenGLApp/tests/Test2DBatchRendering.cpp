@@ -1,4 +1,4 @@
-#include "TestTexture2D.hpp"
+#include "Test2DBatchRendering.hpp"
 
 #include <gl/glew.h>
 #include "OpenGLDebug.hpp"
@@ -8,7 +8,7 @@
 
 
 namespace test {
-	TestTexture2D::TestTexture2D() : m_ClearColor { 0.0f, 0.0f, 0.0f, 1.0f } {
+	Test2DBatchRendering::Test2DBatchRendering() : m_ClearColor { 0.0f, 0.0f, 0.0f, 1.0f } {
 		int vp[4];
 		GLCall(glGetIntegerv(GL_VIEWPORT, vp));
 		width = vp[2];
@@ -29,7 +29,7 @@ namespace test {
 			2,3,0
 		};
 
-		// Scale and Translate positions
+		// Scale //not: and Translate positions
 		for (int i = 0; i < vertexBuf.size(); i += 4) {
 			vertexBuf[i] *= 150;
 			vertexBuf[i + 1] *= 150;
@@ -45,8 +45,8 @@ namespace test {
 		VertexBuffer vb(vertexBuf.data(), sizeof(vertexBuf[0]) * vertexBuf.size());
 
 		// Start Center of screen
-		hw = width * 0.5f; // width/2.0f
-		hh = height * 0.5f; // height/2.0f
+		hw = width * 0.5f;
+		hh = height * 0.5f;
 
 		float qw = hw * 0.5f;
 
@@ -73,25 +73,20 @@ namespace test {
 		// Setup a Shader
 		shader->bind();
 
-		// Setup a Texture
-		//texture1->bind();
-
 		// Unbind once setup
 		va->unbind();
 		vb.unbind();
 		ib->unbind();
 		shader->unbind();
+	}
+	Test2DBatchRendering::~Test2DBatchRendering() {
+	}
 
+	void Test2DBatchRendering::onUpdate(float deltaTime) {
 	}
-	TestTexture2D::~TestTexture2D() {
-	}
-
-	void TestTexture2D::onUpdate(float deltaTime) {
-	}
-	void TestTexture2D::onRender() {
+	void Test2DBatchRendering::onRender() {
 		GLCall(glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]));
-		renderer.clear();
-		//GLCall(glClear(GL_COLOR_BUFFER_BIT));
+		renderer.clear(); //GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		{
 			texture1->bind();
@@ -116,7 +111,7 @@ namespace test {
 		}
 	}
 
-	void TestTexture2D::onImGuiRender() {
+	void Test2DBatchRendering::onImGuiRender() {
 		{
 			ImGui::SliderFloat("Image 1 - X Translation", &translationA.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
 			ImGui::SliderFloat("Image 1 - Y Translation", &translationA.y, -hh, hh);            // Edit 1 float using a slider from 0.0f to 1.0f

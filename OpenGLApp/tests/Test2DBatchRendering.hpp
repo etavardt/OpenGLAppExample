@@ -16,10 +16,10 @@
 
 
 namespace test {
-	class TestTexture2D : public Test {
+	class Test2DBatchRendering : public Test {
 	public:
-		TestTexture2D();
-		~TestTexture2D();
+		Test2DBatchRendering();
+		~Test2DBatchRendering();
 
 		void onUpdate(float deltaTime) override;
 		void onRender() override;

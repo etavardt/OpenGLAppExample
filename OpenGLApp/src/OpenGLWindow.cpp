@@ -15,6 +15,7 @@
 
 #include "TestClearColor.hpp"
 #include "TestTexture2D.hpp"
+#include "Test2DBatchRendering.hpp"
 #include <Test.hpp>
 
 OpenGLWindow::OpenGLWindow() : width(1680), height(945) {
@@ -88,6 +89,7 @@ void OpenGLWindow::pullEvents() {
 
     testMenu->RegisterTest<test::TestClearColor>("Clear Color");
     testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
+    testMenu->RegisterTest<test::Test2DBatchRendering>("2D BatchRendering");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

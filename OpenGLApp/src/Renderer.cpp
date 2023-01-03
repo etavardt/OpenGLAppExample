@@ -10,6 +10,8 @@ void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 	//GLCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_INT, nullptr)); // Test for Error
 }
 
+/*
 void Renderer::clear() const {
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
+*/
