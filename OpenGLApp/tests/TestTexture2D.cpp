@@ -9,9 +9,15 @@
 
 namespace test {
 	TestTexture2D::TestTexture2D() : m_ClearColor { 0.0f, 0.0f, 0.0f, 1.0f } {
-		ImVec2 clientSize = ImGui::GetContentRegionAvail();
-		width = clientSize.x;
-		height = clientSize.y;
+		int vp[4];
+		GLCall(glGetIntegerv(GL_VIEWPORT, vp));
+		width = vp[2];
+		height = vp[3];
+		//ImVec2 clientSize = ImGui::GetContentRegionAvail();
+		//width = clientSize.x;
+		//height = clientSize.y;
+
+		LOG(INFO) << "Window size = (" << width << "x" << height << ")" << std::endl;
 
 		std::vector<float> vertexBuf = {
 			-0.5f, -0.5f, 0.0f, 0.0f, //0

@@ -110,7 +110,6 @@ void OpenGLWindow::pullEvents() {
             ImGui::End();
         }
 
-
         // Rendering
         ImGui::Render();
 
