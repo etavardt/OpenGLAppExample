@@ -43,18 +43,61 @@ void Shader::setUniform1f(const std::string& name, float value) {
     GLCall(glUniform1f(getUniformLocation(name), value));
 }
 
+void Shader::setUniform2f(const std::string& name, float v0, float v1) {
+    GLCall(glUniform2f(getUniformLocation(name), v0, v1));
+}
+
+void Shader::setUniform3f(const std::string& name, float v0, float v1, float v2) {
+    GLCall(glUniform3f(getUniformLocation(name), v0, v1, v2));
+}
+
 void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GLCall(glUniform4f(getUniformLocation(name), v0, v1, v2, v3));
+}
+
+void Shader::setUniform1f(const std::string& name, glm::vec1& value) {
+    GLCall(glUniform1f(getUniformLocation(name), value.x));
+}
+
+void Shader::setUniform2f(const std::string& name, glm::vec2& value) {
+    GLCall(glUniform2f(getUniformLocation(name), value.x, value.y));
+}
+
+void Shader::setUniform3f(const std::string& name, glm::vec3& value) {
+    GLCall(glUniform3f(getUniformLocation(name), value.x, value.y, value.z));
+}
+
+void Shader::setUniform4f(const std::string& name, glm::vec4& value) {
+    GLCall(glUniform4f(getUniformLocation(name), value.x, value.y, value.z, value.t));
+}
+
+void Shader::setUniformMat2f(const std::string& name, const glm::mat2& matrix) {
+    GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
+void Shader::setUniformMat3f(const std::string& name, const glm::mat3& matrix) {
+    GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
 void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
     GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
-
+// The purpous of this function is to keep from hitting a high performace hit call (glGetUniformLocation) by using a cached value.
+// optimized using YouTubeId(@jonasdaverio9369)
 int Shader::getUniformLocation(const std::string& name) {
-    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
-        return m_UniformLocationCache[name];
+
+    auto uniform{ m_UniformLocationCache.try_emplace(name, 0) };
+
+    if (uniform.second)
+        return (uniform.first->second = glGetUniformLocation(m_RendererID, name.c_str()));
+
+    return uniform.first->second;
+
+/*
+    auto it = m_UniformLocationCache.find(name);
+    if (it != m_UniformLocationCache.end())
+        return it->second;
 
     GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
     if (location == -1) {
@@ -63,6 +106,7 @@ int Shader::getUniformLocation(const std::string& name) {
     m_UniformLocationCache[name] = location;
 
     return location;
+*/
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {

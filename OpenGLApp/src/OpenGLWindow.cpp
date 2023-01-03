@@ -81,6 +81,7 @@ void OpenGLWindow::init() {
 }
 
 void OpenGLWindow::pullEvents() {
+    Renderer renderer;
     test::Test* currentTest = nullptr;
     test::TestMenu* testMenu = new test::TestMenu(currentTest);
     currentTest = testMenu;
@@ -92,6 +93,7 @@ void OpenGLWindow::pullEvents() {
     while (!glfwWindowShouldClose(window))
     {
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+        renderer.clear();
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -116,10 +118,10 @@ void OpenGLWindow::pullEvents() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+        GLCall(glfwSwapBuffers(window));
 
         /* Poll for and process events */
-        glfwPollEvents();
+        GLCall(glfwPollEvents());
     }
     if (currentTest != testMenu) {
         delete currentTest;

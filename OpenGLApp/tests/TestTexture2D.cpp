@@ -131,6 +131,7 @@ namespace test {
 			shader->bind();
 			shader->setUniformMat4f("u_MVP", mvp);
 			renderer.draw(*va, *ib, *shader);
+			shader->unbind();
 		}
 
 		{
@@ -139,11 +140,10 @@ namespace test {
 			shader->bind();
 			shader->setUniformMat4f("u_MVP", mvp);
 			renderer.draw(*va, *ib, *shader);
+			shader->unbind();
 		}
-
-
-		renderer.draw(*va, *ib, *shader);
 	}
+
 	void TestTexture2D::onImGuiRender() {
 		{
 			ImGui::SliderFloat("Image 1 - X Translation", &translationA.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
