@@ -8,33 +8,25 @@
 // main function is meant to be hidden in the foundation library.
 //
 // Usage:
+// 
 // Step 1: Create your App Class and extend App as public
 //   i.e.:
-//      class YourApp : public App {
-//      ...
+//      #include "App.hpp"
+// 
+//      class YourKewlApp : public App {
+//          ...
 //      public:
-//
-//      ...
+//          ...
 //      }
-// Step 2: Define a protected static pointer for your App in your App Class
-//   i.e.:
-//      protected:
-//      static YourApp *yourApp;
-// Step 3: Declare, Create and follow a Singleton getInstance function for your app
-//   i.e.:
-//      YourApp &YourApp::yourApp = YourApp::getInstance();
-//
-//      YourApp &YourApp::getInstance() {
-//         static YourApp instance; // created on heap and there is only one and should be freed upon exit of the executable
-//         app = &instance; // this allows the underlying main function to hook into yourApp
-//         return instance;
-//      }
-//
+// Step 2: Create your app object globally in your yourKewlApp.cpp file
+//      i.e.:
+//          YourKewlApp yourKewlApp;
+// 
 ///////////////////////////////////////////////////////////////////////////////
 #pragma once
 
 //#include "EventHandler.hpp"
- 
+
 class App { //: public EventHandler {
 public:
     void operator=(App const &) = delete;
@@ -49,7 +41,7 @@ public:
     friend int main(int ac, char **av);
 
 protected:
-    static App *app;
+    static App* app;
     static App& getApp();
 
     App(); // Default constructor hidden to make it a singleton
