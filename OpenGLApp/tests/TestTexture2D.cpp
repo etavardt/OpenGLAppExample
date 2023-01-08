@@ -8,13 +8,13 @@
 
 
 namespace test {
-	TestTexture2D::TestTexture2D() : m_ClearColor { 0.0f, 0.0f, 0.0f, 1.0f } {
+	TestTexture2D::TestTexture2D() {
 		int vp[4];
 		GLCall(glGetIntegerv(GL_VIEWPORT, vp));
-		width = vp[2];
-		height = vp[3];
+		m_width = vp[2];
+		m_height = vp[3];
 
-		LOG(INFO) << "Window size = (" << width << "x" << height << ")" << std::endl;
+		LOG(INFO) << "Window size = (" << m_width << "x" << m_height << ")" << std::endl;
 
 		std::vector<float> vertexBuf = {
 			-0.5f, -0.5f, 0.0f, 0.0f, //0
@@ -29,58 +29,58 @@ namespace test {
 			2,3,0
 		};
 
-		// Scale and Translate positions
+		// Scale positions
 		for (int i = 0; i < vertexBuf.size(); i += 4) {
-			vertexBuf[i] *= 150;
-			vertexBuf[i + 1] *= 150;
+			vertexBuf[i] *= 300;
+			vertexBuf[i + 1] *= 300;
 		}
 
-		texture1 = std::make_unique<Texture>("res/textures/jrrt.png");
-		texture2 = std::make_unique<Texture>("res/textures/Planning-And-Probing-1.jpg");
+		m_texture1 = std::make_unique<Texture>("res/textures/Planning-And-Probing-1.jpg");
+		m_texture2 = std::make_unique<Texture>("res/textures/jrrt.png");
 
-		shader  = std::make_unique<Shader>("res/shaders/basic.shader");
-		va      = std::make_unique<VertexArray>();
-		ib      = std::make_unique<IndexBuffer>(indices, 6);
+		m_shader  = std::make_unique<Shader>("res/shaders/basic.shader");
+		m_va      = std::make_unique<VertexArray>();
+		m_ib      = std::make_unique<IndexBuffer>(indices, 6);
 
 		VertexBuffer vb(vertexBuf.data(), sizeof(vertexBuf[0]) * vertexBuf.size());
 
 		// Start Center of screen
-		hw = width * 0.5f; // width/2.0f
-		hh = height * 0.5f; // height/2.0f
+		m_hw = m_width * 0.5f; // m_width/2.0f
+		m_hh = m_height * 0.5f; // m_height/2.0f
 
-		float qw = hw * 0.5f;
+		float qw = m_hw * 0.5f;
 
-		translationA = { -qw, 0.0f, 0.0f };
-		translationB = {  qw, 0.0f, 0.0f };
+		m_translationA = { -qw, 0.0f, 0.0f };
+		m_translationB = {  qw, 0.0f, 0.0f };
 
 		// Set Projection Matrix
-		proj  = glm::ortho(-hw, hw, -hh, hh, -1.0f, 1.0f); // Orthographic Projection
-		view  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		//glm::mat4 mvp = model * view * proj; // not on screen because it is not reversed from mvp due to opengl and memory layout for math
-		glm::mat4 mvp = proj * view * model; // reversed from mvp due to opengl and memory layout for math
+		m_proj  = glm::ortho(-m_hw, m_hw, -m_hh, m_hh, -1.0f, 1.0f); // Orthographic Projection
+		m_view  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		m_model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		//glm::mat4 m_mvp = m_model * m_view * m_proj; // not on screen because it is not reversed from m_mvp due to opengl and memory m_layout for math
+		glm::mat4 m_mvp = m_proj * m_view * m_model; // reversed from m_mvp due to opengl and memory m_layout for math
 
 		// Setup Blending
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		// Setup a Vertex Array
-		va->bind();
-		layout.push<float>(2); // vertices
-		layout.push<float>(2); // texture mapping
-		va->addBuffer(vb, layout);
+		m_va->bind();
+		m_layout.push<float>(2); // vertices
+		m_layout.push<float>(2); // texture mapping
+		m_va->addBuffer(vb, m_layout);
 
 		// Setup a Shader
-		shader->bind();
+		m_shader->bind();
 
 		// Setup a Texture
-		//texture1->bind();
+		//m_texture1->bind();
 
 		// Unbind once setup
-		va->unbind();
+		m_va->unbind();
 		vb.unbind();
-		ib->unbind();
-		shader->unbind();
+		m_ib->unbind();
+		m_shader->unbind();
 
 	}
 	TestTexture2D::~TestTexture2D() {
@@ -89,41 +89,41 @@ namespace test {
 	void TestTexture2D::onUpdate(float deltaTime) {
 	}
 	void TestTexture2D::onRender() {
-		GLCall(glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]));
-		renderer.clear();
+		GLCall(glClearColor(m_clearColor[0], m_clearColor[1], m_clearColor[2], m_clearColor[3]));
+		m_renderer.clear();
 		//GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		{
-			texture1->bind();
-			model = glm::translate(glm::mat4(1.0f), translationA);
-			mvp = proj * view * model;
-			shader->bind();
-			shader->setUniformMat4f("u_MVP", mvp);
-			renderer.draw(*va, *ib, *shader);
-			shader->unbind();
-			texture1->unbind();
+			m_texture1->bind();
+			m_model = glm::translate(glm::mat4(1.0f), m_translationA);
+			m_mvp = m_proj * m_view * m_model;
+			m_shader->bind();
+			m_shader->setUniformMat4f("u_MVP", m_mvp);
+			m_renderer.draw(*m_va, *m_ib, *m_shader);
+			m_shader->unbind();
+			m_texture1->unbind();
 		}
 
 		{
-			texture2->bind();
-			model = glm::translate(glm::mat4(1.0f), translationB);
-			mvp = proj * view * model;
-			shader->bind();
-			shader->setUniformMat4f("u_MVP", mvp);
-			renderer.draw(*va, *ib, *shader);
-			shader->unbind();
-			texture2->unbind();
+			m_texture2->bind();
+			m_model = glm::translate(glm::mat4(1.0f), m_translationB);
+			m_mvp = m_proj * m_view * m_model;
+			m_shader->bind();
+			m_shader->setUniformMat4f("u_MVP", m_mvp);
+			m_renderer.draw(*m_va, *m_ib, *m_shader);
+			m_shader->unbind();
+			m_texture2->unbind();
 		}
 	}
 
 	void TestTexture2D::onImGuiRender() {
 		{
-			ImGui::SliderFloat("Image 1 - X Translation", &translationA.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::SliderFloat("Image 1 - Y Translation", &translationA.y, -hh, hh);            // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::SliderFloat("Image 1 - X Translation", &m_translationA.x, -m_hw, m_hw);            // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::SliderFloat("Image 1 - Y Translation", &m_translationA.y, -m_hh, m_hh);            // Edit 1 float using a slider from 0.0f to 1.0f
 			//ImGui::SliderFloat("Z Translation", &translation.z, -hz, hz);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::SliderFloat("Image 2 - X Translation", &translationB.x, -hw, hw);            // Edit 1 float using a slider from 0.0f to 1.0f
-			ImGui::SliderFloat("Image 2 - Y Translation", &translationB.y, -hh, hh);            // Edit 1 float using a slider from 0.0f to 1.0f
-			//ImGui::ColorEdit3("clear color", (float*)&m_ClearColor); // Edit 3 floats representing a color
+			ImGui::SliderFloat("Image 2 - X Translation", &m_translationB.x, -m_hw, m_hw);            // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::SliderFloat("Image 2 - Y Translation", &m_translationB.y, -m_hh, m_hh);            // Edit 1 float using a slider from 0.0f to 1.0f
+			//ImGui::ColorEdit3("clear color", (float*)&m_clearColor); // Edit 3 floats representing a color
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
 	}

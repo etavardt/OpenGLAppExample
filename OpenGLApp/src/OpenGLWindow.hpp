@@ -6,10 +6,10 @@
 
 class OpenGLWindow : Window {
 private:
-	GLFWwindow* window;
+	GLFWwindow* m_window;
 
-    unsigned int width;
-    unsigned int height;
+    unsigned int m_width;
+    unsigned int m_height;
 
 public:
 	OpenGLWindow();

@@ -19,8 +19,8 @@ namespace test {
 
 	class TestMenu : public Test {
 	private:
-		Test*& m_CurrentTest;
-		std::vector<std::pair<std::string, std::function<Test* ()>>> m_Tests;
+		Test*& m_currentTest;
+		std::vector<std::pair<std::string, std::function<Test* ()>>> m_tests;
 	public:
 		TestMenu(Test*& currentTestPointer);
 		//~TestMenu();
@@ -32,7 +32,7 @@ namespace test {
 		template<typename T>
 		void RegisterTest(const std::string& name) {
 			LOG(INFO) << "Registering test " << name << std::endl;
-			m_Tests.push_back(std::make_pair(name, []() { return new T(); }));
+			m_tests.push_back(std::make_pair(name, []() { return new T(); }));
 		}
 	};
 }

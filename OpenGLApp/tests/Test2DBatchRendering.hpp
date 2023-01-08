@@ -25,44 +25,44 @@ namespace test {
 		void onRender() override;
 		void onImGuiRender() override;
 	private:
-		float m_ClearColor[4];
+		float m_clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-        VertexBufferLayout layout;
+        VertexBufferLayout m_layout;
 
-        //VertexArray* va;
-        std::unique_ptr<VertexArray> va;
+        //VertexArray* m_va;
+        std::unique_ptr<VertexArray> m_va;
 
-        VertexBuffer* vb;
-        //std::unique_ptr<VertexBuffer> vb;
+        VertexBuffer* m_vb;
+        //std::unique_ptr<VertexBuffer> m_vb;
 
-        //IndexBuffer* ib;
-        std::unique_ptr<IndexBuffer> ib;
+        //IndexBuffer* m_ib;
+        std::unique_ptr<IndexBuffer> m_ib;
 
-        //Shader shader;
-        //Shader* shader;
-        std::unique_ptr<Shader> shader;
+        //Shader m_shader;
+        //Shader* m_shader;
+        std::unique_ptr<Shader> m_shader;
 
-        //Texture texture;
-        //Texture* texture;
-        //std::unique_ptr<Texture> texture;
-        std::unique_ptr<Texture> texture1;
-        std::unique_ptr<Texture> texture2;
+        //Texture m_texture;
+        //Texture* m_texture;
+        //std::unique_ptr<Texture> m_texture;
+        std::unique_ptr<Texture> m_texture1;
+        std::unique_ptr<Texture> m_texture2;
 
-        Renderer renderer;
+        Renderer m_renderer;
 
-        glm::mat4 proj;
-        glm::mat4 model;
-        glm::mat4 view;
-        glm::mat4 mvp;
+        glm::mat4 m_proj;
+        glm::mat4 m_model;
+        glm::mat4 m_view;
+        glm::mat4 m_mvp;
 
-        unsigned int width;
-        unsigned int height;
+        unsigned int m_width;
+        unsigned int m_height;
 
-        float hw = 0;
-        float hh = 0;
+        float m_hw = 0;
+        float m_hh = 0;
 
-        glm::vec3 translationA;
-        glm::vec3 translationB;
+        glm::vec3 m_translationA;
+        glm::vec3 m_translationB;
 
 	};
 }

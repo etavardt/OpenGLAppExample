@@ -44,8 +44,4 @@ public:
 
 };
 
-//#if defined KEWLF_DEBUG && defined DEBUG_GL
-#define LOG(x) Logger::getInstance() << #x  << ": "
-//#else
-//#define LOG(x) std::cout
-//#endif
+#define LOG(x) Logger::getInstance() << #x  << ": " << __FILE__ << "(" <<  __LINE__ << "): " 

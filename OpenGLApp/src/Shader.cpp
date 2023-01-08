@@ -8,26 +8,26 @@
 
 #include "OpenGLDebug.hpp"
 
-Shader::Shader() : m_RendererID(0) {
+Shader::Shader() : m_rendererID(0) {
 
 }
 
-Shader::Shader(const std::string& filepath) : m_Filepath(filepath), m_RendererID(0) {
+Shader::Shader(const std::string& filepath) : m_filepath(filepath), m_rendererID(0) {
     ShaderProgramSource source = ParseShader(filepath);
     //std::cout << "VERTEX SHADER" << std::endl;
     //std::cout << source.vertexSource << std::endl;
     //std::cout << "FRAGMENT SHADER" << std::endl;
     //std::cout << source.fragmentSource << std::endl;
-    m_RendererID = CreateShader(source.vertexSource, source.fragmentSource);
+    m_rendererID = CreateShader(source.vertexSource, source.fragmentSource);
 
 }
 
 Shader::~Shader() {
-    GLCall(glDeleteProgram(m_RendererID));
+    GLCall(glDeleteProgram(m_rendererID));
 }
 
 void Shader::bind() const {
-    GLCall(glUseProgram(m_RendererID));
+    GLCall(glUseProgram(m_rendererID));
 }
 
 void Shader::unbind() const {
@@ -86,10 +86,10 @@ void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
 // The purpous of this function is to keep from hitting a high performace hit call (glGetUniformLocation) by using a cached value.
 // optimized using YouTubeId(@jonasdaverio9369) suggestion.
 int Shader::getUniformLocation(const std::string& name) {
-    auto uniform{ m_UniformLocationCache.try_emplace(name, 0) };
+    auto uniform{ m_uniformLocationCache.try_emplace(name, 0) };
 
     if (uniform.second)
-        return (uniform.first->second = glGetUniformLocation(m_RendererID, name.c_str()));
+        return (uniform.first->second = glGetUniformLocation(m_rendererID, name.c_str()));
 
     return uniform.first->second;
 }

@@ -3,31 +3,33 @@
 #include "OpenGLApp.hpp"
 
 #include <iostream>
+#include <KewlF/Logger.hpp>
 //#include "OpenGLWindow.hpp"
 
-OpenGLApp& OpenGLApp::openGLApp = OpenGLApp::getInstance();
+OpenGLApp openGLApp;
 
 OpenGLApp::OpenGLApp() {
-	//std::cout << "OpenGLApp Constructed" << std::endl;
+	LOG(INFO) << "OpenGLApp Constructed" << std::endl;
 }
 OpenGLApp::~OpenGLApp() {
-	//std::cout << "OpenGLApp Destructed" << std::endl;
+	LOG(INFO) << "OpenGLApp Destructed" << std::endl;
 }
 
-OpenGLApp& OpenGLApp::getInstance() {
-	static OpenGLApp instance; // should be created on heap? and there is only one and should be freed upon exit of the executable
-	app = &instance; // this allows the underlying main function to hook into yourApp
-	return instance;
+void OpenGLApp::init() {
+	m_window.init();
 }
 
 int OpenGLApp::runApp() {
 
-	window.init();
-	//window.show();
+	//m_window.show();
 
 	return App::runApp();
 }
 
+void OpenGLApp::cleanUp() {
+
+}
+
 void OpenGLApp::processEventLoop() {
-	window.pullEvents();
+	m_window.pullEvents();
 }

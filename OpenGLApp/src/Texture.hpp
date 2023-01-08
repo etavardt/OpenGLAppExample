@@ -4,10 +4,10 @@
 
 class Texture {
 private:
-	unsigned int m_RendererID;
-	std::string m_Filepath;
-	unsigned char* m_LocalBuffer;
-	int m_Width, m_Height, m_Bpp;
+	unsigned int m_rendererID;
+	std::string m_filepath;
+	unsigned char* m_localBuffer;
+	int m_width, m_height, m_bpp;
 public:
 	Texture(const std::string& path);
 	~Texture();
@@ -15,7 +15,7 @@ public:
 	void bind(unsigned int slot = 0) const;
 	void unbind() const;
 
-	inline int getWidth() const { return m_Width; }
-	inline int getHeight() const { return m_Height; }
-	inline int getBpp() const { return m_Bpp; }
+	inline int getWidth() const { return m_width; }
+	inline int getHeight() const { return m_height; }
+	inline int getBpp() const { return m_bpp; }
 };

@@ -12,9 +12,9 @@ struct ShaderProgramSource {
 
 class Shader {
 private:
-	unsigned int m_RendererID; //GLuint
-	std::unordered_map<std::string, int> m_UniformLocationCache;
-	std::string m_Filepath;
+	unsigned int m_rendererID; //GLuint
+	std::unordered_map<std::string, int> m_uniformLocationCache;
+	std::string m_filepath;
 
 public:
 	Shader();

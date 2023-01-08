@@ -3,18 +3,18 @@
 #include "OpenGLDebug.hpp"
 
 VertexArray::VertexArray() {
-	GLCall(glGenVertexArrays(1, &m_RendererID));
+	GLCall(glGenVertexArrays(1, &m_rendererID));
 }
 
 VertexArray::~VertexArray() {
-	GLCall(glDeleteVertexArrays(1, &m_RendererID))
+	GLCall(glDeleteVertexArrays(1, &m_rendererID))
 }
 
 void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
 	bind();
 	vb.bind();
 	const auto& elements = layout.getElements();
-	unsigned int offset = 0;
+	unsigned char* offset = 0;
 	//for (const auto& element : elements) {
 	for (unsigned int i = 0; i < elements.size(); i++) {
 		const auto& element = elements[i];
@@ -25,7 +25,7 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 }
 
 void VertexArray::bind() const {
-	GLCall(glBindVertexArray(m_RendererID));
+	GLCall(glBindVertexArray(m_rendererID));
 }
 
 void VertexArray::unbind() const {

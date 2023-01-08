@@ -18,7 +18,7 @@
 #include "Test2DBatchRendering.hpp"
 #include <Test.hpp>
 
-OpenGLWindow::OpenGLWindow() : width(1680), height(945) {
+OpenGLWindow::OpenGLWindow() : m_width(1680), m_height(945) {
 
     /* Initialize the library */
     if (!glfwInit())
@@ -30,15 +30,15 @@ OpenGLWindow::OpenGLWindow() : width(1680), height(945) {
 
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
-    if (!window)
+    m_window = glfwCreateWindow(m_width, m_height, "OpenGL", NULL, NULL);
+    if (!m_window)
     {
         glfwTerminate();
         throw "Failed call to glfwCreateWindow";
     }
 
     /* Make the window's context current */
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(m_window);
 
     glfwSwapInterval(1);
 
@@ -56,7 +56,7 @@ OpenGLWindow::OpenGLWindow() : width(1680), height(945) {
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_window, true);
     const char* glsl_version = "#version 130";
     ImGui_ImplOpenGL3_Init(glsl_version);
 
@@ -70,7 +70,7 @@ OpenGLWindow::~OpenGLWindow() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(m_window);
     glfwTerminate();
 
     //std::cout << "OpenGLWindow Destructed" << std::endl;
@@ -92,7 +92,7 @@ void OpenGLWindow::pullEvents() {
     testMenu->RegisterTest<test::Test2DBatchRendering>("2D BatchRendering");
 
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(m_window))
     {
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
         renderer.clear();
@@ -120,7 +120,7 @@ void OpenGLWindow::pullEvents() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         /* Swap front and back buffers */
-        GLCall(glfwSwapBuffers(window));
+        GLCall(glfwSwapBuffers(m_window));
 
         /* Poll for and process events */
         GLCall(glfwPollEvents());

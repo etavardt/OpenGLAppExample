@@ -11,6 +11,6 @@ namespace test {
 		void onRender() override;
 		void onImGuiRender() override;
 	private:
-		float m_ClearColor[4];
+		float m_clearColor[4] = { 0.2f, 0.3f, 0.8f, 1.0f };
 	};
 }

@@ -9,22 +9,18 @@
 // TODO: Reference additional headers your program requires here.
 class OpenGLApp : public App { 
 private:
-    static OpenGLApp &openGLApp;
-    OpenGLWindow window;
-
-    OpenGLApp();
-    ~OpenGLApp();
+    OpenGLWindow m_window;
 
     void processEventLoop() override;
 
 protected:
-    //void init() override {};
-    //void cleanUp() override {}; // Clean up what init(ed) items
+    void init() override;
+    void cleanUp() override; // Clean up what init(ed) items
     int runApp() override;
 
 public:
-    static inline OpenGLApp& getApp() { return openGLApp; }
-    static OpenGLApp& getInstance();
-
-
+    OpenGLApp();
+    ~OpenGLApp();
 };
+
+extern OpenGLApp openGLApp;
