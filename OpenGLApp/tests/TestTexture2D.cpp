@@ -16,6 +16,7 @@ namespace test {
 
 		LOG(INFO) << "Window size = (" << m_width << "x" << m_height << ")" << std::endl;
 
+		// 2D point, 2D TexMap Point
 		std::vector<float> vertexBuf = {
 			-0.5f, -0.5f, 0.0f, 0.0f, //0
 			 0.5f, -0.5f, 1.0f, 0.0f, //1
@@ -24,28 +25,22 @@ namespace test {
 		};
 
 		//Indices buffer
-		unsigned int indices[6] = {
+		std::vector<unsigned int> indices = {
 			0,1,2,
 			2,3,0
 		};
-
-		// Scale positions
-		for (int i = 0; i < vertexBuf.size(); i += 4) {
-			vertexBuf[i] *= 300;
-			vertexBuf[i + 1] *= 300;
-		}
 
 		m_texture1 = std::make_unique<Texture>("res/textures/Planning-And-Probing-1.jpg");
 		m_texture2 = std::make_unique<Texture>("res/textures/jrrt.png");
 
 		m_shader  = std::make_unique<Shader>("res/shaders/basic.shader");
 		m_va      = std::make_unique<VertexArray>();
-		m_ib      = std::make_unique<IndexBuffer>(indices, 6);
+		m_ib      = std::make_unique<IndexBuffer>(indices);
 
-		VertexBuffer vb(vertexBuf.data(), sizeof(vertexBuf[0]) * vertexBuf.size());
+		VertexBuffer vb(vertexBuf);
 
 		// Start Center of screen
-		m_hw = m_width * 0.5f; // m_width/2.0f
+		m_hw = m_width  * 0.5f; // m_width/2.0f
 		m_hh = m_height * 0.5f; // m_height/2.0f
 
 		float qw = m_hw * 0.5f;
@@ -53,12 +48,11 @@ namespace test {
 		m_translationA = { -qw, 0.0f, 0.0f };
 		m_translationB = {  qw, 0.0f, 0.0f };
 
-		// Set Projection Matrix
+		// Set Matrices
+		m_ident = glm::mat4(1.0f);
+		m_scale = glm::scale(m_ident, glm::vec3(300.0f));
 		m_proj  = glm::ortho(-m_hw, m_hw, -m_hh, m_hh, -1.0f, 1.0f); // Orthographic Projection
-		m_view  = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		m_model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		//glm::mat4 m_mvp = m_model * m_view * m_proj; // not on screen because it is not reversed from m_mvp due to opengl and memory m_layout for math
-		glm::mat4 m_mvp = m_proj * m_view * m_model; // reversed from m_mvp due to opengl and memory m_layout for math
+		m_view  = glm::translate(m_ident, glm::vec3(0.0f, 0.0f, 0.0f));
 
 		// Setup Blending
 		GLCall(glEnable(GL_BLEND));
@@ -72,9 +66,6 @@ namespace test {
 
 		// Setup a Shader
 		m_shader->bind();
-
-		// Setup a Texture
-		//m_texture1->bind();
 
 		// Unbind once setup
 		m_va->unbind();
@@ -95,7 +86,7 @@ namespace test {
 
 		{
 			m_texture1->bind();
-			m_model = glm::translate(glm::mat4(1.0f), m_translationA);
+			m_model = glm::translate(m_ident, m_translationA) * m_scale;
 			m_mvp = m_proj * m_view * m_model;
 			m_shader->bind();
 			m_shader->setUniformMat4f("u_MVP", m_mvp);
@@ -106,7 +97,7 @@ namespace test {
 
 		{
 			m_texture2->bind();
-			m_model = glm::translate(glm::mat4(1.0f), m_translationB);
+			m_model = glm::translate(m_ident, m_translationB) * m_scale;
 			m_mvp = m_proj * m_view * m_model;
 			m_shader->bind();
 			m_shader->setUniformMat4f("u_MVP", m_mvp);

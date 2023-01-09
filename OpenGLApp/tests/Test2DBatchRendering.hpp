@@ -29,30 +29,24 @@ namespace test {
 
         VertexBufferLayout m_layout;
 
-        //VertexArray* m_va;
         std::unique_ptr<VertexArray> m_va;
 
-        VertexBuffer* m_vb;
+        //VertexBuffer* m_vb;
         //std::unique_ptr<VertexBuffer> m_vb;
 
-        //IndexBuffer* m_ib;
         std::unique_ptr<IndexBuffer> m_ib;
-
-        //Shader m_shader;
-        //Shader* m_shader;
         std::unique_ptr<Shader> m_shader;
 
-        //Texture m_texture;
-        //Texture* m_texture;
-        //std::unique_ptr<Texture> m_texture;
         std::unique_ptr<Texture> m_texture1;
         std::unique_ptr<Texture> m_texture2;
 
         Renderer m_renderer;
 
-        glm::mat4 m_proj;
+        glm::mat4 m_ident;
+        glm::mat4 m_scale;
         glm::mat4 m_model;
         glm::mat4 m_view;
+        glm::mat4 m_proj;
         glm::mat4 m_mvp;
 
         unsigned int m_width;

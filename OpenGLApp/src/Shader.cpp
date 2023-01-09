@@ -5,7 +5,9 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
+#include <KewlF/Logger.hpp>
 #include "OpenGLDebug.hpp"
 
 Shader::Shader() : m_rendererID(0) {
@@ -14,12 +16,11 @@ Shader::Shader() : m_rendererID(0) {
 
 Shader::Shader(const std::string& filepath) : m_filepath(filepath), m_rendererID(0) {
     ShaderProgramSource source = ParseShader(filepath);
-    //std::cout << "VERTEX SHADER" << std::endl;
-    //std::cout << source.vertexSource << std::endl;
-    //std::cout << "FRAGMENT SHADER" << std::endl;
-    //std::cout << source.fragmentSource << std::endl;
+    std::cout << "VERTEX SHADER" << std::endl;
+    std::cout << source.vertexSource << std::endl;
+    std::cout << "FRAGMENT SHADER" << std::endl;
+    std::cout << source.fragmentSource << std::endl;
     m_rendererID = CreateShader(source.vertexSource, source.fragmentSource);
-
 }
 
 Shader::~Shader() {
@@ -95,30 +96,35 @@ int Shader::getUniformLocation(const std::string& name) {
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
-    std::ifstream stream(filepath);
     std::stringstream ss[2];
+    std::ifstream stream(filepath);
 
-    enum class ShaderType {
-        NONE = -1,
-        VERTEX = 0,
-        FRAGMENT = 1
-    };
+    if (stream.is_open()) {
 
-    ShaderType type = ShaderType::NONE;
+        enum class ShaderType {
+            NONE = -1,
+            VERTEX = 0,
+            FRAGMENT = 1
+        };
 
-    std::string line;
-    while (getline(stream, line)) {
-        if (line.find("#shader") != std::string::npos) {
-            if (line.find("vertex") != std::string::npos) {
-                type = ShaderType::VERTEX;
+        ShaderType type = ShaderType::NONE;
+
+        std::string line;
+        while (getline(stream, line)) {
+            if (line.find("#shader") != std::string::npos) {
+                if (line.find("vertex") != std::string::npos) {
+                    type = ShaderType::VERTEX;
+                }
+                else if (line.find("fragment") != std::string::npos) {
+                    type = ShaderType::FRAGMENT;
+                }
             }
-            else if (line.find("fragment") != std::string::npos) {
-                type = ShaderType::FRAGMENT;
+            else {
+                ss[(int)type] << line << "\n";
             }
         }
-        else {
-            ss[(int)type] << line << "\n";
-        }
+    } else {
+        LOG(ERROR) << "Unable to open file(" << std::quoted(filepath) << ")" << std::endl;
     }
 
     return { ss[0].str(), ss[1].str() };
@@ -141,7 +147,7 @@ int Shader::CompileShader(unsigned int type, const std::string& source) {
         char* message = (char*)alloca(length * sizeof(char));
 
         GLCall(glGetShaderInfoLog(id, length, &length, message));
-        std::cout << "Faild to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
+        std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
         std::cout << message << std::endl;
 
         std::cout << (type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT") << " SHADER" << std::endl;

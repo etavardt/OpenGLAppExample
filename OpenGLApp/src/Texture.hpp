@@ -15,6 +15,7 @@ public:
 	void bind(unsigned int slot = 0) const;
 	void unbind() const;
 
+	inline unsigned int getID() const { return m_rendererID; }
 	inline int getWidth() const { return m_width; }
 	inline int getHeight() const { return m_height; }
 	inline int getBpp() const { return m_bpp; }
