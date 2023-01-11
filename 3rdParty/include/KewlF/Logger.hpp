@@ -5,7 +5,7 @@
 #include "String.hpp"
 
 // Severity level enum.
-enum Level {
+enum LogLevel {
     FATAL = 0,
     ERROR = 1,
     WARNING = 2,

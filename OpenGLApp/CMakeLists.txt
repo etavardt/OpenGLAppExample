@@ -27,8 +27,7 @@ file(GLOB SOURCE_FILES LIST_DIRECTORIES false
 
 # Add source to this project's executable.
 add_executable (OpenGLApp ${SOURCE_FILES})
-target_link_libraries(OpenGLApp KewlF glfw glew32s ${OPENGL_LIBRARY})
-target_compile_definitions(OpenGLApp PUBLIC GLEW_STATIC)
+target_link_libraries(OpenGLApp KewlF glfw ${OPENGL_LIBRARY})
 # TODO: Wrap in Debug test
 target_compile_definitions(OpenGLApp PUBLIC DEBUG_GL KEWLF_DEBUG)
 
