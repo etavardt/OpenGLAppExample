@@ -6,7 +6,10 @@ include_directories(
     src/
     tests/
     ../3rdParty/include/
+    ../3rdParty/glfw/include/
     ../3rdParty/imgui/src/
+    ../3rdParty/KewlFlib/KewlF/src
+    ../3rdParty/glad/include/
 )
 
 #link_directories([AFTER|BEFORE] directory1 [directory2 ...])
@@ -17,18 +20,14 @@ link_directories(
 # Add source to this project's executable.
 file(GLOB SOURCE_FILES LIST_DIRECTORIES false
     src/*.cpp
-    src/*.h
-    src/*.hpp
     tests/*.cpp
-    tests/*.h
-    tests/*.hpp
+    ../3rdParty/glad/src/*.c
     ../3rdParty/imgui/src/*.cpp
-    ../3rdParty/imgui/src/*.h
 )
 
 # Add source to this project's executable.
 add_executable (OpenGLApp ${SOURCE_FILES})
-target_link_libraries(OpenGLApp KewlF glfw3 glew32s ${OPENGL_LIBRARY})
+target_link_libraries(OpenGLApp KewlF glfw glew32s ${OPENGL_LIBRARY})
 target_compile_definitions(OpenGLApp PUBLIC GLEW_STATIC)
 # TODO: Wrap in Debug test
 target_compile_definitions(OpenGLApp PUBLIC DEBUG_GL KEWLF_DEBUG)
@@ -36,6 +35,12 @@ target_compile_definitions(OpenGLApp PUBLIC DEBUG_GL KEWLF_DEBUG)
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET OpenGLApp PROPERTY CXX_STANDARD 20)
 endif()
+
+add_custom_command(
+    TARGET OpenGLApp PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/OpenGLApp/res ${CMAKE_BINARY_DIR}/OpenGLApp/res
+    COMMENT "Copying recources" VERBATIM
+)
 
 add_custom_command(
     TARGET OpenGLApp POST_BUILD

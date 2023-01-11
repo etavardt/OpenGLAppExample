@@ -1,3 +1,6 @@
 [submodule "3rdParty/KewlFLib"]
 	path = 3rdParty/KewlFLib
 	url = https://github.com/etavardt/KewlFLib.git
+[submodule "3rdParty/glfw"]
+	path = 3rdParty/glfw
+	url = https://github.com/glfw/glfw.git

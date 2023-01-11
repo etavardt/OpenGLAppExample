@@ -24,7 +24,7 @@ public:
 	void bind() const;
 	void unbind() const;
 
-	inline unsigned int getID() { return m_rendererID; }
+	inline unsigned int getID() const { return m_rendererID; }
 
 	// Set uniforms
 	void setUniform1i(const std::string& name, int value);

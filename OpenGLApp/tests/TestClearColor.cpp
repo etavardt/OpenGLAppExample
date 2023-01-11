@@ -1,6 +1,6 @@
 #include "TestClearColor.hpp"
 
-#include <gl/glew.h>
+#include <glad/glad.h>
 #include "OpenGLDebug.hpp"
 #include <imgui.h>
 

@@ -1,11 +1,12 @@
 #include "Test2DBatchRendering.hpp"
 
-#include <gl/glew.h>
+#include <glad/glad.h>
 #include "OpenGLDebug.hpp"
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Vertex.hpp"
 
 namespace test {
     Test2DBatchRendering::Test2DBatchRendering() {
@@ -13,9 +14,9 @@ namespace test {
         GLCall(glGetIntegerv(GL_VIEWPORT, vp));
         m_width = vp[2];
         m_height = vp[3];
-
         LOG(INFO) << "Window size = (" << m_width << "x" << m_height << ")" << std::endl;
 
+        /*
         // 3D point, 2D TexMap Point, Tex index
         std::vector<float> vertexBuf = {
             -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, //0
@@ -29,6 +30,7 @@ namespace test {
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f  //3
 
         };
+        */
 
         //Indices buffer
         std::vector<unsigned int> indices = {
@@ -52,8 +54,8 @@ namespace test {
         //m_ib      = std::make_unique<IndexBuffer>(indices, 6);
         m_ib      = std::make_unique<IndexBuffer>(indices);
 
-        VertexBuffer vb(vertexBuf.data(), sizeof(vertexBuf[0]) * vertexBuf.size());
-
+        //VertexBuffer vb(vertexBuf.data(), sizeof(vertexBuf[0]) * vertexBuf.size());
+        m_vb = std::make_unique<VertexBuffer>(nullptr, sizeof(Vertex) * 1000);
         // Start Center of screen
         m_hw = m_width * 0.5f;
         m_hh = m_height * 0.5f;
@@ -77,17 +79,18 @@ namespace test {
         // Setup a Vertex Array
         m_va->bind();
         //m_layout.push<float>(6);
-        m_layout.push<float>(3); // vertices
+        m_layout.push<float>(3); // vertex
+        m_layout.push<float>(4); // color
         m_layout.push<float>(2); // texture mapping
         m_layout.push<float>(1); // texture id
-        m_va->addBuffer(vb, m_layout);
+        m_va->addBuffer(*m_vb, m_layout);
 
         // Setup a Shader
         m_shader->bind();
 
         // Unbind once setup
         m_va->unbind();
-        vb.unbind();
+        m_vb->unbind();
         m_ib->unbind();
         m_shader->unbind();
     }
@@ -101,6 +104,21 @@ namespace test {
         m_renderer.clear(); //GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         {
+            //set dynamic vertex buffer
+            // 3D point, 2D TexMap Point, Tex index
+            //std::vector<float> vertexBuf = {
+
+            auto q0 = Vertex::CreateQuad(0);
+            auto q1 = Vertex::CreateQuad(1);
+
+            Vertex vertices[8];
+            memcpy(vertices, q0.data(), q0.size() * sizeof(Vertex));
+            memcpy(vertices + q0.size(), q1.data(), q1.size() * sizeof(Vertex));
+
+            m_vb->bind();
+            //GLCall(glMapBuffer());
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
             glBindTextureUnit(0, m_texture1->getID());
             glBindTextureUnit(1, m_texture2->getID());
 

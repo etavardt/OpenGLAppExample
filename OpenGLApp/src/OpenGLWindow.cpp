@@ -12,20 +12,21 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-
+#include "Test.hpp"
 #include "TestClearColor.hpp"
 #include "TestTexture2D.hpp"
 #include "Test2DBatchRendering.hpp"
-#include <Test.hpp>
 
 OpenGLWindow::OpenGLWindow() : m_width(1680), m_height(945) {
+
+    glfwSetErrorCallback(error_callback);
 
     /* Initialize the library */
     if (!glfwInit())
         throw "Failed call to glfwInit";
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
@@ -36,15 +37,20 @@ OpenGLWindow::OpenGLWindow() : m_width(1680), m_height(945) {
         glfwTerminate();
         throw "Failed call to glfwCreateWindow";
     }
+    
+    glfwSetKeyCallback(m_window, key_callback);
 
     /* Make the window's context current */
     glfwMakeContextCurrent(m_window);
 
     glfwSwapInterval(1);
 
-    if (glewInit() != GLEW_OK) {
-        std::cerr << "glewInit Failed" << std::endl;
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cerr << "Failed to initialize GLAD" << std::endl;
+        throw "Failed call to gladLoadGLLoader!";
     }
+
     glDebug::initialize();
 
     // Setup Dear ImGui context

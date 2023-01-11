@@ -32,7 +32,7 @@ namespace test {
         std::unique_ptr<VertexArray> m_va;
 
         //VertexBuffer* m_vb;
-        //std::unique_ptr<VertexBuffer> m_vb;
+        std::unique_ptr<VertexBuffer> m_vb;
 
         std::unique_ptr<IndexBuffer> m_ib;
         std::unique_ptr<Shader> m_shader;

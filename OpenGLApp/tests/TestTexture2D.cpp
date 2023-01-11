@@ -1,6 +1,6 @@
 #include "TestTexture2D.hpp"
 
-#include <gl/glew.h>
+#include <glad/glad.h>
 #include "OpenGLDebug.hpp"
 #include <imgui.h>
 #include <glm/glm.hpp>

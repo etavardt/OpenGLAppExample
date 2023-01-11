@@ -3,7 +3,8 @@
 #include "OpenGLDebug.hpp"
 
 VertexArray::VertexArray() {
-	GLCall(glGenVertexArrays(1, &m_rendererID));
+//	GLCall(glGenVertexArrays(1, &m_rendererID));
+	GLCall(glCreateVertexArrays(1, &m_rendererID));
 }
 
 VertexArray::~VertexArray() {
@@ -19,7 +20,8 @@ void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 	for (unsigned int i = 0; i < elements.size(); i++) {
 		const auto& element = elements[i];
 		GLCall(glEnableVertexAttribArray(i));
-        GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.getStride(), (const void*)offset));
+		//GLCall(glEnableVertexArrayAttrib(vb.getID(), i));
+		GLCall(glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.getStride(), (const void*)offset));
 		offset += element.count * VertexBufferElement::getSizeOfType(element.type);
 	}
 }
