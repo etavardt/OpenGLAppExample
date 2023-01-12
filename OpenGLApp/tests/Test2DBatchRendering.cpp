@@ -83,6 +83,7 @@ namespace test {
         m_layout.push<float>(4); // color
         m_layout.push<float>(2); // texture mapping
         m_layout.push<float>(1); // texture id
+        m_layout.push<float>(1); // mvp id
         m_va->addBuffer(*m_vb, m_layout);
 
         // Setup a Shader
@@ -108,8 +109,8 @@ namespace test {
             // 3D point, 2D TexMap Point, Tex index
             //std::vector<float> vertexBuf = {
 
-            auto q0 = Vertex::CreateQuad(0);
-            auto q1 = Vertex::CreateQuad(1);
+            auto q0 = Vertex::CreateQuad(0, 0);
+            auto q1 = Vertex::CreateQuad(1, 1);
 
             Vertex vertices[8];
             memcpy(vertices, q0.data(), q0.size() * sizeof(Vertex));
@@ -123,9 +124,15 @@ namespace test {
             glBindTextureUnit(1, m_texture2->getID());
 
             m_model = glm::translate(m_ident, m_translationA) * m_scale;
-            m_mvp = m_proj * m_view * m_model;
+            m_mvp.clear();
+            //m_mvp[0] = m_proj * m_view * m_model;
+            m_mvp.emplace_back(m_proj * m_view * m_model);
+            m_model = glm::translate(m_ident, m_translationB) * m_scale;
+            //m_mvp[1] = m_proj * m_view * m_model;
+            m_mvp.emplace_back(m_proj * m_view * m_model);
             m_shader->bind();
-            m_shader->setUniformMat4f("u_MVP", m_mvp);
+
+            m_shader->setUniformMat4fv("u_MVP", m_mvp);
 
             m_renderer.draw(*m_va, *m_ib, *m_shader);
             m_shader->unbind();

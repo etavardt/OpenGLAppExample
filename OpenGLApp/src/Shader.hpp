@@ -37,10 +37,11 @@ public:
 	void setUniform3f(const std::string& name, glm::vec3& value);
 	void setUniform4f(const std::string& name, glm::vec4& value);
 
-
 	void setUniformMat2f(const std::string& name, const glm::mat2& matrix);
 	void setUniformMat3f(const std::string& name, const glm::mat3& matrix);
 	void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
+
+	void setUniformMat4fv(const std::string& name, const std::vector<glm::mat4>& matrix);
 
 private:
 	int getUniformLocation(const std::string& name);

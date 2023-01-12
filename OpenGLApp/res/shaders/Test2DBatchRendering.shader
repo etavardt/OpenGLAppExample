@@ -7,16 +7,19 @@ layout(location = 0) in vec4  l_position;
 layout(location = 1) in vec4  l_color;
 layout(location = 2) in vec2  l_texCoord;
 layout(location = 3) in float l_texInd;
+layout(location = 4) in float l_mvpInd;
 
 out vec4  v_color;
 out vec2  v_texCoord;
 out float v_texInd;
 
-uniform mat4 u_MVP;
+uniform mat4 u_MVP[2];
 
 void main()
 {
-    gl_Position = u_MVP * l_position;
+    int mvpInd = int(l_mvpInd);
+
+    gl_Position = u_MVP[mvpInd] * l_position;
     v_color     = l_color;
     v_texCoord  = l_texCoord;
     v_texInd    = l_texInd;

@@ -47,7 +47,7 @@ namespace test {
         glm::mat4 m_model;
         glm::mat4 m_view;
         glm::mat4 m_proj;
-        glm::mat4 m_mvp;
+        std::vector<glm::mat4> m_mvp;
 
         unsigned int m_width;
         unsigned int m_height;

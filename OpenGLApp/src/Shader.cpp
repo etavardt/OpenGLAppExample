@@ -7,7 +7,9 @@
 #include <sstream>
 #include <iomanip>
 
+#include <glm/gtc/type_ptr.hpp>
 #include <KewlF/Logger.hpp>
+
 #include "OpenGLDebug.hpp"
 
 Shader::Shader() : m_rendererID(0) {
@@ -83,6 +85,14 @@ void Shader::setUniformMat3f(const std::string& name, const glm::mat3& matrix) {
 void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
     GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
+
+void Shader::setUniformMat4fv(const std::string& name, const std::vector<glm::mat4>& matrix) {
+    //glUniformMatrix4fv(fShaderUnitSkeletal.uBones, 20, False, @bones20[0]); // Passing 20 matrices
+    //glUniformMatrix4fv(jointLoc, 10, GL_FALSE, glm::value_ptr(finalBoneTransforms.at(0)));
+    //glUniformMatrix4fv(getUniformLocation(name), matrix.size(), GL_FALSE, glm::value_ptr(matrix.data()[0]));
+    GLCall(glUniformMatrix4fv(getUniformLocation(name), matrix.size(), GL_FALSE, glm::value_ptr(matrix.data()[0])));
+}
+
 
 // The purpous of this function is to keep from hitting a high performace hit call (glGetUniformLocation) by using a cached value.
 // optimized using YouTubeId(@jonasdaverio9369) suggestion.
