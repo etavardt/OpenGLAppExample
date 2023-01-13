@@ -14,7 +14,9 @@ The example app to demonstrate how to use modern opengl.
     ~ OpenGL Math Library
 - stb
     ~ The stb image portion for loading image files.
-- KewlF (The Kewl Application Framework)
+- Dear imGui
+    ~ A GUI interface for menus, tools, controls, etc..
+- KewlF (The Kewl Application Framework) (Personal Project-a work in progress)
     ~ A platform independent C++ Object Oriented Application Framework.
     ~ When cloning:
         > `git clone --recursive https://github.com/etavardt/OpenGLAppExample.git`
