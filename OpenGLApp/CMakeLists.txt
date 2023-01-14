@@ -8,7 +8,8 @@ include_directories(
     ../3rdParty/include/
     ../3rdParty/glfw/include/
     ../3rdParty/imgui/src/
-    ../3rdParty/KewlFlib/KewlF/src
+    #../3rdParty/KewlFlib/KewlF/src/
+    ../3rdParty/KewlFlib/KewlF/include/
     ../3rdParty/glad/include/
 )
 
