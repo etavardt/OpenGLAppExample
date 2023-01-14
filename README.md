@@ -19,7 +19,7 @@ The example app to demonstrate how to use modern opengl.
 - KewlF (The Kewl Application Framework) (Personal Project-a work in progress)
     ~ A platform independent C++ Object Oriented Application Framework.
     ~ When cloning:
-        > `git clone --recursive https://github.com/etavardt/OpenGLAppExample.git`
+        ~ `git clone --recursive https://github.com/etavardt/OpenGLAppExample.git`
 
 ## Log
     ??/??/???? Started this from following an OpenGL tutorial on 'TheCherno's
