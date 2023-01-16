@@ -5,6 +5,9 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("OpenGLAppExample")
 
+#set(CMAKE_CXX_STANDARD 20)
+#set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 include(CMakePrintHelpers) #Example usage: cmake_print_variables(SOURCE_FILES)
 cmake_print_variables(CMAKE_INSTALL_LIBDIR)
 cmake_print_variables(CMAKE_BUILD_DIR)

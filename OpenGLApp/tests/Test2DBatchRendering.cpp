@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Vertex.hpp"
+#include "Quad.hpp"
 
 namespace test {
     Test2DBatchRendering::Test2DBatchRendering() {
@@ -15,22 +15,6 @@ namespace test {
         m_width = vp[2];
         m_height = vp[3];
         LOG(INFO) << "Window size = (" << m_width << "x" << m_height << ")" << std::endl;
-
-        /*
-        // 3D point, 2D TexMap Point, Tex index
-        std::vector<float> vertexBuf = {
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, //0
-             0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, //1
-             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, //2
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, //3
-
-           - 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, //0
-             0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, //1
-             0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, //2
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 1.0f  //3
-
-        };
-        */
 
         //Indices buffer
         std::vector<unsigned int> indices = {
@@ -41,7 +25,8 @@ namespace test {
             6,7,4
         };
 
-        m_texture1 = std::make_unique<Texture>("res/textures/Planning-And-Probing-1.jpg");
+        m_texture1 = std::make_unique<Texture>("res/textures/_MG_1005.bmp");
+        //m_texture1 = std::make_unique<Texture>("res/textures/Planning-And-Probing-1.jpg");
         m_texture2 = std::make_unique<Texture>("res/textures/jrrt.png");
 
         m_shader  = std::make_unique<Shader>("res/shaders/Test2DBatchRendering.shader");
@@ -51,10 +36,8 @@ namespace test {
         GLCall(glUniform1iv(loc, 2, samplers));
 
         m_va      = std::make_unique<VertexArray>();
-        //m_ib      = std::make_unique<IndexBuffer>(indices, 6);
         m_ib      = std::make_unique<IndexBuffer>(indices);
 
-        //VertexBuffer vb(vertexBuf.data(), sizeof(vertexBuf[0]) * vertexBuf.size());
         m_vb = std::make_unique<VertexBuffer>(nullptr, sizeof(Vertex) * 1000);
         // Start Center of screen
         m_hw = m_width * 0.5f;
@@ -95,11 +78,13 @@ namespace test {
         m_ib->unbind();
         m_shader->unbind();
     }
+
     Test2DBatchRendering::~Test2DBatchRendering() {
     }
 
     void Test2DBatchRendering::onUpdate(float deltaTime) {
     }
+
     void Test2DBatchRendering::onRender() {
         GLCall(glClearColor(m_clearColor[0], m_clearColor[1], m_clearColor[2], m_clearColor[3]));
         m_renderer.clear(); //GLCall(glClear(GL_COLOR_BUFFER_BIT));
@@ -109,8 +94,8 @@ namespace test {
             // 3D point, 2D TexMap Point, Tex index
             //std::vector<float> vertexBuf = {
 
-            auto q0 = Vertex::CreateQuad(0, 0);
-            auto q1 = Vertex::CreateQuad(1, 1);
+            auto q0 = QuadNs::createQuad(0, 0);
+            auto q1 = QuadNs::createQuad(1, 1);
 
             Vertex vertices[8];
             memcpy(vertices, q0.data(), q0.size() * sizeof(Vertex));

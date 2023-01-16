@@ -23,10 +23,7 @@ namespace test {
 		std::vector<std::pair<std::string, std::function<Test* ()>>> m_tests;
 	public:
 		TestMenu(Test*& currentTestPointer);
-		//~TestMenu();
 
-		//void onUpdate(float deltaTime) override;
-		//void onRender() override;
 		void onImGuiRender() override;
 		
 		template<typename T>
